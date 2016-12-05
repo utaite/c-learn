@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.yuyu.clearn.R;
+import com.yuyu.clearn.api.SampleActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         id = getSharedPreferences("login", MODE_PRIVATE).getString("id", null);
         pw = getSharedPreferences("login", MODE_PRIVATE).getString("pw", null);
-        if(id != null && pw != null) {
+        if (id != null && pw != null) {
             id_edit.setText(id);
             pw_edit.setText(pw);
             check_btn.setChecked(true);
@@ -100,7 +101,12 @@ public class LoginActivity extends AppCompatActivity {
             keyboardDown();
             getSharedPreferences("login", MODE_PRIVATE).edit().putString("id", (check_btn.isChecked()) ? id : null).apply();
             getSharedPreferences("login", MODE_PRIVATE).edit().putString("pw", (check_btn.isChecked()) ? pw : null).apply();
-            Snackbar.make(findViewById(R.id.login_activity), "LOGIN COMPLETE: " + check_btn.isChecked(), Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(findViewById(R.id.login_activity), "LOGIN COMPLETE: " + check_btn.isChecked(), Snackbar.LENGTH_SHORT)
+                    .setAction("INTENT", view -> {
+                        startActivity(new Intent(this, SampleActivity.class));
+                        finish();
+                    })
+                    .show();
         }
     }
 
