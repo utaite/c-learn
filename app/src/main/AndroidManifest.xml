@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".api.SampleActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
@@ -23,8 +23,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".api.SampleActivity" />
 
     </application>
 
