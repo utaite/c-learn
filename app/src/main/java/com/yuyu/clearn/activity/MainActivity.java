@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.vr.sdk.widgets.video.VrVideoView;
 import com.google.vr.sdk.widgets.video.VrVideoView.Options;
 import com.naver.speech.clientapi.SpeechRecognitionResult;
@@ -29,8 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.video_view)
     VrVideoView video_view;
-    @BindView(R.id.sound_img)
-    ImageView sound_img;
+    @BindView(R.id.sound_png)
+    ImageView sound_png;
+    @BindView(R.id.wait_gif)
+    ImageView wait_gif;
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String CLIENT_ID = "hgjHh11TeYg649dN5zT1";
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private long time;
     private String uri = "http://192.168.43.79/test/Miku.mp4";
 
-    private void handleMessage(Message msg) {
+    public void handleMessage(Message msg) {
         switch (msg.what) {
             case R.id.clientReady:
                 writer = new AudioWriterPCM(
@@ -56,17 +59,13 @@ public class MainActivity extends AppCompatActivity {
                 writer.write((short[]) msg.obj);
                 break;
 
-            case R.id.partialResult:
-                break;
-
             case R.id.finalResult:
                 SpeechRecognitionResult speechRecognitionResult = (SpeechRecognitionResult) msg.obj;
                 List<String> results = speechRecognitionResult.getResults();
                 for (String result : results) {
-                    Log.e(TAG, "음성 인식 결과 값: " + result);
                     if (result.contains("종료")) {
                         finish();
-                    } else if (result.contains("실행")) {
+                    } else if (result.contains("재생")) {
                         isPaused = true;
                         video_view.playVideo();
                     } else if (result.contains("정지")) {
@@ -74,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                         video_view.pauseVideo();
                     }
                 }
+                Glide.with(this).load(android.R.color.transparent).into(wait_gif);
                 break;
 
             case R.id.recognitionError:
@@ -95,8 +95,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        sound_img.getDrawable().setAlpha(150);
-        sound_img.setVisibility(View.GONE);
+        int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
+        int newUiOptions = uiOptions;
+        newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
+        sound_png.getDrawable().setAlpha(150);
+        sound_png.setVisibility(View.GONE);
         handler = new RecognitionHandler(this);
         naverRecognizer = new NaverRecognizer(this, handler, CLIENT_ID);
         options = new Options();
@@ -108,16 +114,19 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, String.valueOf(e));
         }
         video_view.setOnTouchListener((view, motionEvent) -> {
-            int action = motionEvent.getAction();
-            if (action == MotionEvent.ACTION_UP) {
+            if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
-                    Log.e(TAG, "음성 인식: 시작.");
-                    sound_img.setVisibility(View.VISIBLE);
+                    Glide.with(this).load(android.R.color.transparent).into(wait_gif);
+                    sound_png.setVisibility(View.VISIBLE);
                     naverRecognizer.recognize();
-                } else {
-                    Log.e(TAG, "음성 인식: 종료.");
-                    sound_img.setVisibility(View.GONE);
-                    naverRecognizer.getSpeechRecognizer().stop();
+                    new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            sound_png.setVisibility(View.GONE);
+                            Glide.with(getApplicationContext()).load(R.drawable.wait_gif).asGif().into(wait_gif);
+                            naverRecognizer.getSpeechRecognizer().stop();
+                        }
+                    }.sendEmptyMessageDelayed(0, 2000);
                 }
             }
             return true;
@@ -130,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
         naverRecognizer.getSpeechRecognizer().release();
         video_view.pauseRendering();
         time = video_view.getCurrentPosition();
-        Log.e(time + "/" + isPaused, "SAVE");
     }
 
     @Override
@@ -144,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             video_view.playVideo();
         }
-        Log.e(time + "/" + isPaused, "LOAD");
     }
 
     @Override

@@ -11,11 +11,20 @@
         android:layout_height="match_parent" />
 
     <ImageView
-        android:id="@+id/sound_img"
+        android:id="@+id/sound_png"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/sound_img" />
+        android:scaleType="fitXY"
+        android:src="@drawable/sound_png" />
+
+    <ImageView
+        android:id="@+id/wait_gif"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:scaleType="fitXY" />
 
 </RelativeLayout>
