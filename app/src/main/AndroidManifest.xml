@@ -16,8 +16,7 @@
 
         <activity
             android:name=".activity.MainActivity"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="adjustNothing"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
