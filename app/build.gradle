@@ -11,14 +11,12 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -29,7 +27,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':common')
+    compile project(':commonwidget')
+    compile project(':videowidget')
     compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.android.support:design:25.0.1'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
@@ -39,5 +39,7 @@ dependencies {
     compile 'jp.wasabeef:glide-transformations:2.0.1'
     compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.3.0'
     compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
+    compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }
