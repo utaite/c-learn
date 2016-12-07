@@ -13,9 +13,12 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.VideoActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
+        <activity
+            android:name=".activity.LoginActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar.FullScreen">
             <intent-filter>
@@ -23,7 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>
