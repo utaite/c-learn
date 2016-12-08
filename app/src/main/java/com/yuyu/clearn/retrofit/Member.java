@@ -4,18 +4,18 @@ import com.google.gson.annotations.SerializedName;
 
 public class Member {
 
-    @SerializedName("a_num")
-    private int a_num;
+    @SerializedName("v_num")
+    private int v_num;
 
     @SerializedName("m_token")
     private String m_token;
 
-    public int getA_num() {
-        return a_num;
+    public int getV_num() {
+        return v_num;
     }
 
-    public void setA_num(int a_num) {
-        this.a_num = a_num;
+    public void setV_num(int v_num) {
+        this.v_num = v_num;
     }
 
     public String getM_token() {

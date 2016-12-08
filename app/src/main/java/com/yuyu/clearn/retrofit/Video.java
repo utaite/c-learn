@@ -4,33 +4,27 @@ import com.google.gson.annotations.SerializedName;
 
 public class Video {
 
-    @SerializedName("a_num")
-    private int a_num;
+    @SerializedName("v_num")
+    private int v_num;
 
     @SerializedName("m_token")
     private String m_token;
 
-    @SerializedName("a_chapter")
-    private String a_chapter;
+    @SerializedName("v_finish")
+    private String v_finish;
 
-    @SerializedName("a_finish")
-    private String a_finish;
+    @SerializedName("v_uri")
+    private String v_uri;
 
-    @SerializedName("a_uri")
-    private String a_uri;
+    @SerializedName("v_ctime")
+    private int v_ctime;
 
-    @SerializedName("a_ttime")
-    private int a_ttime;
-
-    @SerializedName("a_ctime")
-    private int a_ctime;
-
-    public int getA_num() {
-        return a_num;
+    public int getV_num() {
+        return v_num;
     }
 
-    public void setA_num(int a_num) {
-        this.a_num = a_num;
+    public void setV_num(int v_num) {
+        this.v_num = v_num;
     }
 
     public String getM_token() {
@@ -41,44 +35,28 @@ public class Video {
         this.m_token = m_token;
     }
 
-    public String getA_chapter() {
-        return a_chapter;
+    public String getV_finish() {
+        return v_finish;
     }
 
-    public void setA_chapter(String a_chapter) {
-        this.a_chapter = a_chapter;
+    public void setV_finish(String v_finish) {
+        this.v_finish = v_finish;
     }
 
-    public String getA_finish() {
-        return a_finish;
+    public String getV_uri() {
+        return v_uri;
     }
 
-    public void setA_finish(String a_finish) {
-        this.a_finish = a_finish;
+    public void setV_uri(String v_uri) {
+        this.v_uri = v_uri;
     }
 
-    public String getA_uri() {
-        return a_uri;
+    public int getV_ctime() {
+        return v_ctime;
     }
 
-    public void setA_uri(String a_uri) {
-        this.a_uri = a_uri;
-    }
-
-    public int getA_ttime() {
-        return a_ttime;
-    }
-
-    public void setA_ttime(int a_ttime) {
-        this.a_ttime = a_ttime;
-    }
-
-    public int getA_ctime() {
-        return a_ctime;
-    }
-
-    public void setA_ctime(int a_ctime) {
-        this.a_ctime = a_ctime;
+    public void setV_ctime(int v_ctime) {
+        this.v_ctime = v_ctime;
     }
 
 }

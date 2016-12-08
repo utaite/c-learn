@@ -23,22 +23,12 @@
         <activity
             android:name=".activity.LoginActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
-
-        <activity
-            android:name=".exactivity.LoginActivity"
-            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".exactivity.VideoActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
     </application>
 
 </manifest>

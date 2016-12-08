@@ -37,22 +37,22 @@ public class VideoActivity extends AppCompatActivity {
 
     public interface PostVideo {
         @FormUrlEncoded
-        @POST("/api/video")
-        Call<Video> video(@Field("a_num") int a_num,
+        @POST("api/video")
+        Call<Video> video(@Field("v_num") int v_num,
                           @Field("m_token") String m_token);
     }
 
     public interface PostFinish {
         @FormUrlEncoded
-        @POST("/api/finish")
-        Call<Video> finish(@Field("a_num") int a_num);
+        @POST("api/finish")
+        Call<Void> finish(@Field("v_num") int v_num);
     }
 
     public interface PostSave {
         @FormUrlEncoded
-        @POST("/api/save")
-        Call<Video> save(@Field("a_num") int a_num,
-                         @Field("a_ctime") long a_ctime);
+        @POST("api/save")
+        Call<Void> save(@Field("v_num") int v_num,
+                        @Field("v_ctime") long v_ctime);
     }
 
     @BindView(R.id.video_view)
@@ -65,9 +65,10 @@ public class VideoActivity extends AppCompatActivity {
     private NaverRecognizer naverRecognizer;
     private AudioWriterPCM writer;
     private Options options;
+    private Thread pThread;
 
     private boolean isPaused;
-    private long a_ctime;
+    private long v_ctime;
 
     public void handleMessage(Message msg) {
         switch (msg.what) {
@@ -86,7 +87,7 @@ public class VideoActivity extends AppCompatActivity {
                 List<String> results = speechRecognitionResult.getResults();
                 for (String result : results) {
                     if (result.contains("종료")) {
-                        finish();
+                        exit();
                     } else if (result.contains("재생")) {
                         isPaused = true;
                         video_view.playVideo();
@@ -140,48 +141,62 @@ public class VideoActivity extends AppCompatActivity {
         });
         video_view.setDisplayMode(VrVideoView.DisplayMode.FULLSCREEN_STEREO);
         video_view.fullScreenDialog.setCancelable(false);
-        Call<Video> repos = new Retrofit.Builder()
-                .baseUrl("http://utaitebox.com")
+        Call<Video> videoCall = new Retrofit.Builder()
+                .baseUrl(LoginActivity.BASE + "/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(PostVideo.class)
-                .video(getIntent().getIntExtra("a_num", -1), getIntent().getStringExtra("m_token"));
-        repos.enqueue(new Callback<Video>() {
-            @Override
-            public void onResponse(Call<Video> call, Response<Video> response) {
-                Video repo = response.body();
-                try {
-                    video_view.loadVideo(Uri.parse(repo.getA_uri()), options);
-                    video_view.seekTo(repo.getA_ctime());
-                    new Thread(() -> {
-                        while (true) {
-                            a_ctime = video_view.getCurrentPosition();
-                            if (a_ctime == video_view.getDuration()) {
-                                new Retrofit.Builder()
-                                        .baseUrl("http://utaitebox.com")
-                                        .addConverterFactory(GsonConverterFactory.create())
-                                        .build()
-                                        .create(PostFinish.class)
-                                        .finish(getIntent().getIntExtra("a_num", -1));
-                                finish();
-                            } else {
-                                try {
-                                    Thread.sleep(100);
-                                } catch (InterruptedException e) {
-                                }
-                            }
-                        }
-                    }).start();
-                } catch (IOException e) {
-                    Log.e(TAG, String.valueOf(e));
-                }
-            }
+                .video(getIntent().getIntExtra("v_num", -1), getIntent().getStringExtra("m_token"));
+        videoCall.enqueue(new Callback<Video>() {
+                              @Override
+                              public void onResponse(Call<Video> call, Response<Video> response) {
+                                  Video repo = response.body();
+                                  try {
+                                      video_view.loadVideo(Uri.parse(LoginActivity.BASE + repo.getV_uri()), options);
+                                  } catch (IOException e) {
+                                      Log.e(TAG, String.valueOf(e));
+                                  }
+                                  video_view.seekTo(repo.getV_ctime());
+                                  Runnable runnable = () -> {
+                                      while (!pThread.isInterrupted()) {
+                                          v_ctime = video_view.getCurrentPosition();
+                                          Log.e(video_view.getDuration() + "", v_ctime + "");
+                                          if (v_ctime >= video_view.getDuration()) {
+                                              Call<Void> finishCall = new Retrofit.Builder()
+                                                      .baseUrl(LoginActivity.BASE + "/")
+                                                      .addConverterFactory(GsonConverterFactory.create())
+                                                      .build()
+                                                      .create(PostFinish.class)
+                                                      .finish(getIntent().getIntExtra("v_num", -1));
+                                              finishCall.enqueue(new Callback<Void>() {
+                                                  @Override
+                                                  public void onResponse(Call<Void> call, Response<Void> response) {
+                                                  }
 
-            @Override
-            public void onFailure(Call<Video> call, Throwable t) {
-                Log.e(TAG, String.valueOf(t));
-            }
-        });
+                                                  @Override
+                                                  public void onFailure(Call<Void> call, Throwable t) {
+                                                  }
+                                              });
+                                              exit();
+                                          } else {
+                                              try {
+                                                  Thread.sleep(100);
+                                              } catch (InterruptedException e) {
+                                              }
+                                          }
+                                      }
+                                  };
+                                  pThread = new Thread(runnable);
+                                  pThread.start();
+                              }
+
+                              @Override
+                              public void onFailure(Call<Video> call, Throwable t) {
+                                  Log.e(TAG, String.valueOf(t));
+                              }
+                          }
+
+        );
     }
 
     @Override
@@ -189,7 +204,7 @@ public class VideoActivity extends AppCompatActivity {
         super.onPause();
         naverRecognizer.getSpeechRecognizer().release();
         video_view.pauseRendering();
-        a_ctime = video_view.getCurrentPosition();
+        v_ctime = video_view.getCurrentPosition();
     }
 
     @Override
@@ -197,7 +212,7 @@ public class VideoActivity extends AppCompatActivity {
         super.onResume();
         naverRecognizer.getSpeechRecognizer().initialize();
         video_view.resumeRendering();
-        video_view.seekTo(a_ctime);
+        video_view.seekTo(v_ctime);
         if (isPaused) {
             video_view.pauseVideo();
         } else {
@@ -205,16 +220,28 @@ public class VideoActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        video_view.shutdown();
-        new Retrofit.Builder()
-                .baseUrl("http://utaitebox.com")
+    public void exit() {
+        Call<Void> saveCall = new Retrofit.Builder()
+                .baseUrl(LoginActivity.BASE + "/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(PostSave.class)
-                .save(getIntent().getIntExtra("a_num", -1), a_ctime);
-        super.onDestroy();
+                .save(getIntent().getIntExtra("v_num", -1), v_ctime);
+        saveCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.e(TAG, "COMPLETE");
+                pThread.interrupt();
+                video_view.fullScreenDialog.dismiss();
+                video_view.pauseRendering();
+                video_view.shutdown();
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+            }
+        });
     }
 
     private static class RecognitionHandler extends Handler {

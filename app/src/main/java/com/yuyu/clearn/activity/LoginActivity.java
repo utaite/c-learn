@@ -36,9 +36,9 @@ public class LoginActivity extends AppCompatActivity {
 
     public interface PostLogin {
         @FormUrlEncoded
-        @POST("/api/login")
+        @POST("api/login")
         Call<Member> login(@Field("id") String id,
-                         @Field("password") String password);
+                           @Field("password") String password);
     }
 
     @BindView(R.id.id_edit)
@@ -50,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.save_btn)
     AppCompatCheckBox save_btn;
 
+    public static final String BASE = "http://192.168.43.79/CLearn";
     private static final String TAG = LoginActivity.class.getSimpleName();
     private static final String CHECK = "CHECK", SAVE = "SAVE", NONE = "NONE";
 
@@ -89,9 +90,9 @@ public class LoginActivity extends AppCompatActivity {
         if (vid == R.id.login_btn) {
             loginMethod();
         } else if (vid == R.id.register_btn) {
-            checkMethod("http://utaitebox.com/list");
+            checkMethod(BASE);
         } else if (vid == R.id.find_btn) {
-            checkMethod("http://utaitebox.com/timeline");
+            checkMethod(BASE);
         }
     }
 
@@ -166,21 +167,27 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             Task task = new Task(context, 0);
             task.onPreExecute();
-            Call<Member> repos = new Retrofit.Builder()
-                    .baseUrl("http://utaitebox.com")
+            Call<Member> loginCall = new Retrofit.Builder()
+                    .baseUrl(BASE + "/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
                     .create(PostLogin.class)
                     .login(id, pw);
-            repos.enqueue(new Callback<Member>() {
+            loginCall.enqueue(new Callback<Member>() {
                 @Override
                 public void onResponse(Call<Member> call, Response<Member> response) {
                     task.onPostExecute(null);
                     Member repo = response.body();
-                    Intent intent = new Intent(context, VideoActivity.class);
-                    intent.putExtra("a_num", repo.getA_num());
-                    intent.putExtra("m_token", repo.getM_token());
-                    startActivity(intent);
+                    if (repo.getV_num() == -1) {
+                        mToast.setText(getString(R.string.login_error));
+                        mToast.show();
+                    } else {
+                        Intent intent = new Intent(context, VideoActivity.class);
+                        intent.putExtra("v_num", repo.getV_num());
+                        intent.putExtra("m_token", repo.getM_token());
+                        startActivity(intent);
+                        finish();
+                    }
                 }
 
                 @Override
