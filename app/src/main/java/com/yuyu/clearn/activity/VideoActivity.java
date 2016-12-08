@@ -10,14 +10,13 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.google.vr.sdk.widgets.video.VrVideoView;
 import com.google.vr.sdk.widgets.video.VrVideoView.Options;
 import com.naver.speech.clientapi.SpeechRecognitionResult;
 import com.yuyu.clearn.R;
 import com.yuyu.clearn.api.AudioWriterPCM;
 import com.yuyu.clearn.api.NaverRecognizer;
+import com.yuyu.clearn.retrofit.Video;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -25,8 +24,36 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.POST;
 
 public class VideoActivity extends AppCompatActivity {
+
+    public interface PostVideo {
+        @FormUrlEncoded
+        @POST("/api/video")
+        Call<Video> video(@Field("a_num") int a_num,
+                          @Field("m_token") String m_token);
+    }
+
+    public interface PostFinish {
+        @FormUrlEncoded
+        @POST("/api/finish")
+        Call<Video> finish(@Field("a_num") int a_num);
+    }
+
+    public interface PostSave {
+        @FormUrlEncoded
+        @POST("/api/save")
+        Call<Video> save(@Field("a_num") int a_num,
+                         @Field("a_ctime") long a_ctime);
+    }
 
     @BindView(R.id.video_view)
     VrVideoView video_view;
@@ -35,14 +62,12 @@ public class VideoActivity extends AppCompatActivity {
     private static final String CLIENT_ID = "hgjHh11TeYg649dN5zT1";
 
     private RecognitionHandler handler;
-    private RequestManager glide;
     private NaverRecognizer naverRecognizer;
     private AudioWriterPCM writer;
     private Options options;
 
     private boolean isPaused;
-    private long time;
-    private String uri = "http://192.168.43.79/test/Miku.mp4";
+    private long a_ctime;
 
     public void handleMessage(Message msg) {
         switch (msg.what) {
@@ -89,9 +114,8 @@ public class VideoActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_video);
         ButterKnife.bind(this);
-        glide = Glide.with(this);
         int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
         uiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         uiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
@@ -102,13 +126,6 @@ public class VideoActivity extends AppCompatActivity {
         options = new Options();
         options.inputFormat = Options.FORMAT_DEFAULT;
         options.inputType = Options.TYPE_MONO;
-        try {
-            video_view.loadVideo(Uri.parse(uri), options);
-            video_view.setDisplayMode(VrVideoView.DisplayMode.FULLSCREEN_STEREO);
-            video_view.fullScreenDialog.setCancelable(false);
-        } catch (IOException e) {
-            Log.e(TAG, String.valueOf(e));
-        }
         video_view.setOnTouchListener((view, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_UP && !naverRecognizer.getSpeechRecognizer().isRunning()) {
                 naverRecognizer.recognize();
@@ -121,6 +138,50 @@ public class VideoActivity extends AppCompatActivity {
             }
             return true;
         });
+        video_view.setDisplayMode(VrVideoView.DisplayMode.FULLSCREEN_STEREO);
+        video_view.fullScreenDialog.setCancelable(false);
+        Call<Video> repos = new Retrofit.Builder()
+                .baseUrl("http://utaitebox.com")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(PostVideo.class)
+                .video(getIntent().getIntExtra("a_num", -1), getIntent().getStringExtra("m_token"));
+        repos.enqueue(new Callback<Video>() {
+            @Override
+            public void onResponse(Call<Video> call, Response<Video> response) {
+                Video repo = response.body();
+                try {
+                    video_view.loadVideo(Uri.parse(repo.getA_uri()), options);
+                    video_view.seekTo(repo.getA_ctime());
+                    new Thread(() -> {
+                        while (true) {
+                            a_ctime = video_view.getCurrentPosition();
+                            if (a_ctime == video_view.getDuration()) {
+                                new Retrofit.Builder()
+                                        .baseUrl("http://utaitebox.com")
+                                        .addConverterFactory(GsonConverterFactory.create())
+                                        .build()
+                                        .create(PostFinish.class)
+                                        .finish(getIntent().getIntExtra("a_num", -1));
+                                finish();
+                            } else {
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException e) {
+                                }
+                            }
+                        }
+                    }).start();
+                } catch (IOException e) {
+                    Log.e(TAG, String.valueOf(e));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Video> call, Throwable t) {
+                Log.e(TAG, String.valueOf(t));
+            }
+        });
     }
 
     @Override
@@ -128,7 +189,7 @@ public class VideoActivity extends AppCompatActivity {
         super.onPause();
         naverRecognizer.getSpeechRecognizer().release();
         video_view.pauseRendering();
-        time = video_view.getCurrentPosition();
+        a_ctime = video_view.getCurrentPosition();
     }
 
     @Override
@@ -136,7 +197,7 @@ public class VideoActivity extends AppCompatActivity {
         super.onResume();
         naverRecognizer.getSpeechRecognizer().initialize();
         video_view.resumeRendering();
-        video_view.seekTo(time);
+        video_view.seekTo(a_ctime);
         if (isPaused) {
             video_view.pauseVideo();
         } else {
@@ -147,6 +208,12 @@ public class VideoActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         video_view.shutdown();
+        new Retrofit.Builder()
+                .baseUrl("http://utaitebox.com")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(PostSave.class)
+                .save(getIntent().getIntExtra("a_num", -1), a_ctime);
         super.onDestroy();
     }
 

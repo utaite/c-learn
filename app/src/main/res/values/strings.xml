@@ -9,6 +9,9 @@
     <string name="find_btn">아이디 / 비밀번호 찾기</string>
     <string name="onBackPressed">\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.</string>
     <string name="task_0">로딩 중입니다 ...</string>
+    <string name="remember_id">아이디 저장</string>
     <string name="remember_me">자동 로그인</string>
     <string name="error_field_required">값을 입력해주세요</string>
+    <string name="internet_error">인터넷 접속에 실패했습니다.</string>
+    <string name="login_error">로그인에 실패했습니다.</string>
 </resources>
