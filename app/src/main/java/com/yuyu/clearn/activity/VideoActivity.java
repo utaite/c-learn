@@ -18,7 +18,7 @@ import com.naver.speech.clientapi.SpeechRecognitionResult;
 import com.yuyu.clearn.R;
 import com.yuyu.clearn.api.AudioWriterPCM;
 import com.yuyu.clearn.api.NaverRecognizer;
-import com.yuyu.clearn.retrofit.Video;
+import com.yuyu.clearn.retrofit.Member;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -37,13 +37,13 @@ import retrofit2.http.POST;
 
 public class VideoActivity extends AppCompatActivity {
 
-    // 이전 로그인 액티비티에서 전달받은 값 v_num과 m_token을 서버에 request 이후
+    // 이전 로그인 액티비티에서 전달받은 값 v_num과 p_token을 서버에 request 이후
     // 일치하는 데이터의 여러 정보를 response 받음
     public interface PostVideo {
         @FormUrlEncoded
         @POST("api/video")
-        Call<Video> video(@Field("v_num") int v_num,
-                          @Field("m_token") String m_token);
+        Call<Member> video(@Field("v_num") int v_num,
+                           @Field("p_token") String p_token);
     }
 
     // 동영상 시청이 끝났을 경우 v_num을 request하여
@@ -178,19 +178,19 @@ public class VideoActivity extends AppCompatActivity {
         video_view.setDisplayMode(VrVideoView.DisplayMode.FULLSCREEN_STEREO);
         video_view.fullScreenDialog.setCancelable(false);
         // PostVideo 인터페이스를 사용해 이전 로그인 액티비티에서 전달받은 값
-        // v_num과 m_token을 서버에 request 이후 response 받은 여러 정보들을 사용
-        Call<Video> videoCall = new Retrofit.Builder()
+        // v_num과 p_token을 서버에 request 이후 response 받은 여러 정보들을 사용
+        Call<Member> videoCall = new Retrofit.Builder()
                 .baseUrl(LoginActivity.BASE + "/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(PostVideo.class)
-                .video(getIntent().getIntExtra("v_num", -1), getIntent().getStringExtra("m_token"));
-        videoCall.enqueue(new Callback<Video>() {
+                .video(getIntent().getIntExtra("v_num", -1), getIntent().getStringExtra("p_token"));
+        videoCall.enqueue(new Callback<Member>() {
                               @Override
-                              public void onResponse(Call<Video> call, Response<Video> response) {
-                                  Video repo = response.body();
+                              public void onResponse(Call<Member> call, Response<Member> response) {
+                                  Member repo = response.body();
                                   try {
-                                      video_view.loadVideo(Uri.parse(LoginActivity.BASE + repo.getV_uri()), options);
+                                      video_view.loadVideo(Uri.parse(LoginActivity.BASE + "/resources/" + repo.getCt_file()), options);
                                   } catch (IOException e) {
                                       Log.e(TAG, String.valueOf(e));
                                   }
@@ -204,24 +204,21 @@ public class VideoActivity extends AppCompatActivity {
                                       while (!pThread.isInterrupted()) {
                                           v_ctime = video_view.getCurrentPosition();
                                           if (v_ctime >= video_view.getDuration() && video_view.getDuration() != -1) {
-                                              if (repo.getV_finish() == 0) {
-                                                  Call<Void> finishCall = new Retrofit.Builder()
-                                                          .baseUrl(LoginActivity.BASE + "/")
-                                                          .addConverterFactory(GsonConverterFactory.create())
-                                                          .build()
-                                                          .create(PostFinish.class)
-                                                          .finish(getIntent().getIntExtra("v_num", -1));
-                                                  finishCall.enqueue(new Callback<Void>() {
-                                                      @Override
-                                                      public void onResponse(Call<Void> call, Response<Void> response) {
-                                                      }
+                                              Call<Void> finishCall = new Retrofit.Builder()
+                                                      .baseUrl(LoginActivity.BASE + "/")
+                                                      .addConverterFactory(GsonConverterFactory.create())
+                                                      .build()
+                                                      .create(PostFinish.class)
+                                                      .finish(getIntent().getIntExtra("v_num", -1));
+                                              finishCall.enqueue(new Callback<Void>() {
+                                                  @Override
+                                                  public void onResponse(Call<Void> call, Response<Void> response) {
+                                                  }
 
-                                                      @Override
-                                                      public void onFailure(Call<Void> call, Throwable t) {
-                                                      }
-                                                  });
-                                              }
-                                              exit();
+                                                  @Override
+                                                  public void onFailure(Call<Void> call, Throwable t) {
+                                                  }
+                                              });
                                           }
                                       }
                                   };
@@ -230,7 +227,7 @@ public class VideoActivity extends AppCompatActivity {
                               }
 
                               @Override
-                              public void onFailure(Call<Video> call, Throwable t) {
+                              public void onFailure(Call<Member> call, Throwable t) {
                                   Log.e(TAG, String.valueOf(t));
                               }
                           }

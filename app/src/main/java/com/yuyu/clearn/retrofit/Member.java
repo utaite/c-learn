@@ -8,23 +8,29 @@ public class Member {
     @SerializedName("v_num")
     private int v_num;
 
-    @SerializedName("m_token")
-    private String m_token;
+    @SerializedName("v_ctime")
+    private long v_ctime;
+
+    @SerializedName("p_token")
+    private String p_token;
+
+    @SerializedName("ct_file")
+    private String ct_file;
 
     public int getV_num() {
         return v_num;
     }
 
-    public void setV_num(int v_num) {
-        this.v_num = v_num;
+    public long getV_ctime() {
+        return v_ctime;
     }
 
-    public String getM_token() {
-        return m_token;
+    public String getP_token() {
+        return p_token;
     }
 
-    public void setM_token(String m_token) {
-        this.m_token = m_token;
+    public String getCt_file() {
+        return ct_file;
     }
 
 }

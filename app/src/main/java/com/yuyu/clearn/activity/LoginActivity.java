@@ -37,12 +37,12 @@ import retrofit2.http.POST;
 public class LoginActivity extends AppCompatActivity {
 
     // UUID를 사용한 JWT 형식의 로그인 연동
-    // id와 password를 서버에 request 이후 일치하는 계정이 있다면 m_token과 v_num을 response 받음
+    // id와 password를 서버에 request 이후 일치하는 계정이 있다면 p_token과 v_num을 response 받음
     public interface PostLogin {
         @FormUrlEncoded
         @POST("api/login")
-        Call<Member> login(@Field("id") String id,
-                           @Field("password") String password);
+        Call<Member> login(@Field("p_id") String id,
+                           @Field("p_pw") String pw);
     }
 
     @BindView(R.id.id_edit)
@@ -197,10 +197,10 @@ public class LoginActivity extends AppCompatActivity {
                         mToast.setText(getString(R.string.login_error));
                         mToast.show();
                     } else {
-                        // 로그인에 성공하면 response 받은 v_num과 m_token을 다음 액티비티로 전달하고 실행
+                        // 로그인에 성공하면 response 받은 v_num과 p_token을 다음 액티비티로 전달하고 실행
                         Intent intent = new Intent(context, VideoActivity.class);
                         intent.putExtra("v_num", repo.getV_num());
-                        intent.putExtra("m_token", repo.getM_token());
+                        intent.putExtra("p_token", repo.getP_token());
                         startActivity(intent);
                         finish();
                     }
