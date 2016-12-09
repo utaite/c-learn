@@ -1,5 +1,7 @@
 package com.yuyu.clearn.activity;
 
+import android.content.Context;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -71,9 +73,11 @@ public class VideoActivity extends AppCompatActivity {
     private NaverRecognizer naverRecognizer;
     private AudioWriterPCM writer;
     private Options options;
+    private Context context;
+    private MediaPlayer mediaPlayer;
     private Thread pThread;
 
-    private boolean isPaused;
+    private boolean isPaused, isEvent;
     private long v_ctime;
 
     // 음성 인식 이벤트 과정
@@ -94,29 +98,36 @@ public class VideoActivity extends AppCompatActivity {
                 List<String> results = speechRecognitionResult.getResults();
                 for (String result : results) {
                     // 음성 인식 이벤트 처리
-                    if (result.contains("종료")) {
-                        exit();
+                    if (isEvent) {
                         break;
+                    } else if (result.contains("종료")) {
+                        exit();
+                        isEvent = true;
                     } else if (result.contains("재생")) {
                         isPaused = true;
                         video_view.playVideo();
-                        break;
+                        isEvent = true;
                     } else if (result.contains("정지")) {
                         isPaused = false;
                         video_view.pauseVideo();
-                        break;
+                        isEvent = true;
                     } else if (result.contains("앞으로")) {
                         video_view.seekTo(v_ctime += 20000);
-                        break;
+                        isEvent = true;
                     } else if (result.contains("뒤로")) {
                         video_view.seekTo(v_ctime -= 20000);
-                        break;
+                        isEvent = true;
                     } else if (result.contains("처음으로")) {
                         video_view.seekTo(v_ctime = 0);
-                        break;
+                        isEvent = true;
                     }
                 }
-                break;
+                if (!isEvent) {
+                    isEnd = false;
+                    mediaPlayerInit(R.raw.replay);
+                } else {
+                    isEvent = false;
+                }
 
             case R.id.recognitionError:
                 if (writer != null) {
@@ -137,27 +148,29 @@ public class VideoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
         ButterKnife.bind(this);
+        context = this;
         int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
         uiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         uiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
         uiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         handler = new RecognitionHandler(this);
-        naverRecognizer = new NaverRecognizer(this, handler, CLIENT_ID);
+        naverRecognizer = new NaverRecognizer(context, handler, CLIENT_ID);
         options = new Options();
         options.inputFormat = Options.FORMAT_DEFAULT;
         options.inputType = Options.TYPE_MONO;
-        // 동영상이 클릭 되었을 경우 음성 인식 이벤트를 1.5초간 받음
+        // 동영상이 클릭 되었을 경우 음성 인식 이벤트를 2.5초간 받음
         // 추후 카드보드의 버튼으로도 대체 할 예정
         video_view.setOnTouchListener((view, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_UP && !naverRecognizer.getSpeechRecognizer().isRunning()) {
                 naverRecognizer.recognize();
+                mediaPlayerInit(R.raw.now);
                 new Handler() {
                     @Override
                     public void handleMessage(Message msg) {
                         naverRecognizer.getSpeechRecognizer().stop();
                     }
-                }.sendEmptyMessageDelayed(0, 1500);
+                }.sendEmptyMessageDelayed(0, 2500);
             }
             return true;
         });
@@ -191,9 +204,8 @@ public class VideoActivity extends AppCompatActivity {
                                   Runnable runnable = () -> {
                                       while (!pThread.isInterrupted()) {
                                           v_ctime = video_view.getCurrentPosition();
-                                          Log.e(v_ctime + "", video_view.getDuration() + "");
                                           if (v_ctime >= video_view.getDuration() && video_view.getDuration() != -1) {
-                                              if (repo.getV_finish().equals("N")) {
+                                              if (repo.getV_finish() == 0) {
                                                   Call<Void> finishCall = new Retrofit.Builder()
                                                           .baseUrl(LoginActivity.BASE + "/")
                                                           .addConverterFactory(GsonConverterFactory.create())
@@ -274,6 +286,15 @@ public class VideoActivity extends AppCompatActivity {
             public void onFailure(Call<Void> call, Throwable t) {
             }
         });
+    }
+
+    public void mediaPlayerInit(int resId) {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+        }
+        mediaPlayer = MediaPlayer.create(context, resId);
+        mediaPlayer.setOnPreparedListener(mp -> mp.start());
     }
 
     private static class RecognitionHandler extends Handler {
