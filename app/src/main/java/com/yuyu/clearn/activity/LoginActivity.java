@@ -34,6 +34,8 @@ import retrofit2.http.POST;
 
 public class LoginActivity extends AppCompatActivity {
 
+    // UUID를 사용한 JWT 형식의 로그인 연동
+    // id와 password를 서버에 request 이후 일치하는 계정이 있다면 m_token과 v_num을 response 받음
     public interface PostLogin {
         @FormUrlEncoded
         @POST("api/login")
@@ -66,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         context = this;
         mToast = Toast.makeText(context, "null", Toast.LENGTH_SHORT);
+        // 아이디 저장, 자동 로그인이 활성화 되어있는지 status로 확인 후 분기에 맞게 실행
         status = getSharedPreferences("login", MODE_PRIVATE).getString("status", NONE);
         id = getSharedPreferences("login", MODE_PRIVATE).getString("id", null);
         pw = getSharedPreferences("login", MODE_PRIVATE).getString("pw", null);
@@ -78,12 +81,14 @@ public class LoginActivity extends AppCompatActivity {
             id_edit.setText(id);
             save_btn.setChecked(true);
         }
+        // 키보드 버튼 옵션 설정
         id_edit.setOnEditorActionListener((v, actionId, event) -> {
             pw_edit.requestFocus();
             return true;
         });
     }
 
+    // OnClick 메소드 설정
     @OnClick({R.id.login_btn, R.id.register_btn, R.id.find_btn})
     public void onButtonMethod(View view) {
         int vid = view.getId();
@@ -96,6 +101,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // 아이디 저장 설정 / 자동 로그인과 중복되지 않음
     @OnClick({R.id.check_btn, R.id.check_txt})
     public void onCheckMethod(View view) {
         if (view.getId() == R.id.check_txt) {
@@ -106,6 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // 자동 로그인 설정 / 아이디 저장과 중복되지 않음
     @OnClick({R.id.save_btn, R.id.save_txt})
     public void onSaveMethod(View view) {
         if (view.getId() == R.id.save_txt) {
@@ -127,12 +134,14 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // 키보드 내리기
     public void keyboardDown() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(id_edit.getWindowToken(), 0);
         imm.hideSoftInputFromWindow(pw_edit.getWindowToken(), 0);
     }
 
+    // 인터넷 연결 확인 후 연결되지 않았다면 다음 액티비티로 넘어가지 않음
     public void checkMethod(String uri) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -144,6 +153,8 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // PostLogin 인터페이스를 사용해 id와 password를 서버로 request
+    // 이후 response 받은 값을 확인하여 로그인 처리
     public void loginMethod() {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -165,7 +176,7 @@ public class LoginActivity extends AppCompatActivity {
             mToast.setText(getString(R.string.internet_error));
             mToast.show();
         } else {
-            Task task = new Task(context, 0);
+            Task task = new Task(context);
             task.onPreExecute();
             Call<Member> loginCall = new Retrofit.Builder()
                     .baseUrl(BASE + "/")
@@ -182,6 +193,7 @@ public class LoginActivity extends AppCompatActivity {
                         mToast.setText(getString(R.string.login_error));
                         mToast.show();
                     } else {
+                        // 로그인에 성공하면 response 받은 v_num과 m_token을 다음 액티비티로 전달하고 실행
                         Intent intent = new Intent(context, VideoActivity.class);
                         intent.putExtra("v_num", repo.getV_num());
                         intent.putExtra("m_token", repo.getM_token());

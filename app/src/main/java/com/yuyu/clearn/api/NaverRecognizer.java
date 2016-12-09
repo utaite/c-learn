@@ -15,6 +15,7 @@ import com.naver.speech.clientapi.SpeechRecognitionResult;
 import com.naver.speech.clientapi.SpeechRecognizer;
 import com.yuyu.clearn.R;
 
+// 네이버 음성 인식 라이브러리로 이벤트를 처리하기 위해 구현한 클래스
 public class NaverRecognizer implements SpeechRecognitionListener {
 
 	private final static String TAG = NaverRecognizer.class.getSimpleName();

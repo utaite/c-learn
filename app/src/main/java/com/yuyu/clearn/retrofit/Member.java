@@ -2,6 +2,7 @@ package com.yuyu.clearn.retrofit;
 
 import com.google.gson.annotations.SerializedName;
 
+// Retrofit 라이브러리로 Restful 통신을 위해 구현한 클래스
 public class Member {
 
     @SerializedName("v_num")

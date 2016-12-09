@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+// 네이버 음성 인식 라이브러리로 이벤트를 처리하기 위해 구현한 클래스
 public class AudioWriterPCM {
 
     private final static String TAG = AudioWriterPCM.class.getSimpleName();

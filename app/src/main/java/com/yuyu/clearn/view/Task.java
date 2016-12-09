@@ -6,18 +6,15 @@ import android.os.AsyncTask;
 
 import com.yuyu.clearn.R;
 
+// AsyncTask를 사용하기 위해 구현한 클래스
 public class Task extends AsyncTask<Void, Void, Void> {
 
     private String msg;
     private ProgressDialog asyncDialog;
 
-    public Task(Context context, int type) {
+    public Task(Context context) {
         asyncDialog = new ProgressDialog(context);
-        switch (type) {
-            case 0:
-                msg = context.getString(R.string.task_0);
-                break;
-        }
+        msg = context.getString(R.string.task_0);
     }
 
 
