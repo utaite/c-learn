@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "245610136714",
+    "firebase_url": "https://clearn-8f5fb.firebaseio.com",
+    "project_id": "clearn-8f5fb",
+    "storage_bucket": "clearn-8f5fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:245610136714:android:0994f0c429054c18",
+        "android_client_info": {
+          "package_name": "com.yuyu.clearn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "245610136714-a8bap07fe2o4qfg0ud4oqd80f975n1or.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOFoKWClkrNkyRv2cd7tVQJgiWaULGv_s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

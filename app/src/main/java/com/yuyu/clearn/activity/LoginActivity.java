@@ -16,6 +16,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.yuyu.clearn.R;
 import com.yuyu.clearn.retrofit.Member;
 import com.yuyu.clearn.view.Task;
@@ -67,6 +69,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         context = this;
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
+        FirebaseInstanceId.getInstance().getToken();
         mToast = Toast.makeText(context, "null", Toast.LENGTH_SHORT);
         // 아이디 저장, 자동 로그인이 활성화 되어있는지 status로 확인 후 분기에 맞게 실행
         status = getSharedPreferences("login", MODE_PRIVATE).getString("status", NONE);

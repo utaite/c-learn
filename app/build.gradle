@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.jakewharton.butterknife'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 25
@@ -41,5 +42,6 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
     compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
+    compile "com.google.firebase:firebase-messaging:9.0.1"
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }
