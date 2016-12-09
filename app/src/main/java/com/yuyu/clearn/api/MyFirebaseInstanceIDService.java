@@ -5,7 +5,6 @@ import android.util.Log;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
-
 // FCM 푸쉬 이벤트를 처리하기 위해 구현한 클래스
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 

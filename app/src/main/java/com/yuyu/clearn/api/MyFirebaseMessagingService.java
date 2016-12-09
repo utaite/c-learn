@@ -13,7 +13,6 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.yuyu.clearn.R;
 import com.yuyu.clearn.activity.LoginActivity;
 
-
 // FCM 푸쉬 이벤트를 처리하기 위해 구현한 클래스
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
@@ -32,7 +31,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("FCM Push Test")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
