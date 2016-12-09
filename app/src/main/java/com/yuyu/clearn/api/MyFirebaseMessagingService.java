@@ -8,12 +8,13 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.yuyu.clearn.R;
 import com.yuyu.clearn.activity.LoginActivity;
 
 
-public class MyFirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
+public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
 
     @Override
