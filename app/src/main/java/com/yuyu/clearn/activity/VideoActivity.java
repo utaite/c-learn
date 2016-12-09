@@ -123,7 +123,6 @@ public class VideoActivity extends AppCompatActivity {
                     }
                 }
                 if (!isEvent) {
-                    isEnd = false;
                     mediaPlayerInit(R.raw.replay);
                 } else {
                     isEvent = false;
