@@ -17,8 +17,6 @@ import java.util.List;
 
 public class FirstActivity extends AhoyOnboarderActivity {
 
-    private static final String TAG = FirstActivity.class.getSimpleName();
-
     private Toast mToast;
     private long currentTime;
 
@@ -35,9 +33,9 @@ public class FirstActivity extends AhoyOnboarderActivity {
         if (!getSharedPreferences("first", MODE_PRIVATE).getBoolean("start", false)) {
             // 튜토리얼을 거치지 않았다면 초기 화면(사용법)을 보여줌
             // 튜토리얼로 보여줄 View 객체 생성 및 값 설정
-            AhoyOnboarderCard ahoyOnboarderCard1 = new AhoyOnboarderCard("City Guide", "Detailed guides to help you plan your trip.", R.drawable.unity_1);
-            AhoyOnboarderCard ahoyOnboarderCard2 = new AhoyOnboarderCard("Travel Blog", "Share your travel experiences with a vast network of fellow travellers.", R.drawable.unity_2);
-            AhoyOnboarderCard ahoyOnboarderCard3 = new AhoyOnboarderCard("Chat", "Connect with like minded people and exchange your travel stories.", R.drawable.unity_3);
+            AhoyOnboarderCard ahoyOnboarderCard1 = new AhoyOnboarderCard(getString(R.string.start_1_1), getString(R.string.start_1_2), R.drawable.unity_1);
+            AhoyOnboarderCard ahoyOnboarderCard2 = new AhoyOnboarderCard(getString(R.string.start_2_1), getString(R.string.start_2_2), R.drawable.unity_2);
+            AhoyOnboarderCard ahoyOnboarderCard3 = new AhoyOnboarderCard(getString(R.string.start_3_1), getString(R.string.start_3_2), R.drawable.unity_3);
             ahoyOnboarderCard1.setBackgroundColor(R.color.black_transparent);
             ahoyOnboarderCard2.setBackgroundColor(R.color.black_transparent);
             ahoyOnboarderCard3.setBackgroundColor(R.color.black_transparent);
@@ -57,8 +55,7 @@ public class FirstActivity extends AhoyOnboarderActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 setFinishButtonDrawableStyle(ContextCompat.getDrawable(this, R.drawable.rounded_button));
             }
-            Typeface face = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-            setFont(face);
+            setFont(Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf"));
             setOnboardPages(pages);
         } else {
             // 튜토리얼을 이미 거쳤다면 바로 로그인 액티비티로 이동

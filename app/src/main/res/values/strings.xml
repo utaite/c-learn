@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">CLearn</string>
-    <string name="str_start">Start</string>
-    <string name="str_stop">Stop</string>
     <string name="prompt_id">아이디</string>
     <string name="prompt_password">비밀번호</string>
     <string name="login_btn">로그인</string>
@@ -15,4 +13,10 @@
     <string name="internet_error">인터넷 접속에 실패했습니다.</string>
     <string name="login_error">로그인에 실패했습니다.</string>
     <string name="finish_title">CLearn 시작하기</string>
+    <string name="start_1_1">시작하기에 앞서</string>
+    <string name="start_1_2">본 어플은 가상현실 교육 'CLearn'의 동영상 재생을 위해 설치하는 어플입니다.</string>
+    <string name="start_2_1">아직 회원이 아니시라면?</string>
+    <string name="start_2_2">튜토리얼이 끝난 후 '회원가입' 버튼을 클릭해 'CLearn'의 컨텐츠를 즐겨보세요!</string>
+    <string name="start_3_1">사용법을 모르시겠다면?</string>
+    <string name="start_3_2">먼저 로그인으로 계정연동 후, 'CLearn' 페이지에서 시청하고 싶은 영상을 클릭하세요!</string>
 </resources>

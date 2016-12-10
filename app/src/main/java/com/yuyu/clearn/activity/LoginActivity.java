@@ -1,6 +1,7 @@
 package com.yuyu.clearn.activity;
 
 import android.animation.Animator;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -21,8 +22,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.yuyu.clearn.R;
 import com.yuyu.clearn.retrofit.Member;
 import com.yuyu.clearn.view.Task;
@@ -41,13 +40,24 @@ import retrofit2.http.POST;
 
 public class LoginActivity extends AppCompatActivity {
 
-    // UUID를 사용한 JWT 형식의 로그인 연동
+    // FCM token을 사용한 JWT 형식의 로그인 연동
     // id와 password를 서버에 request 이후 일치하는 계정이 있다면 p_token과 v_num을 response 받음
     public interface PostLogin {
         @FormUrlEncoded
         @POST("api/login")
         Call<Member> login(@Field("p_id") String id,
                            @Field("p_pw") String pw);
+    }
+
+    // 처음 로그인을 했을 경우 or 클라이언트의 토큰 값이 변경되었을 경우
+    // 변경 전과 변경 후의 token을 전부 request
+    public interface PostToken {
+        @FormUrlEncoded
+        @POST("api/token")
+        Call<Void> token(@Field("p_id") String id,
+                         @Field("p_pw") String pw,
+                         @Field("p_token") String afterToken,
+                         @Field("before_token") String beforeToken);
     }
 
     @BindView(R.id.id_edit)
@@ -85,8 +95,6 @@ public class LoginActivity extends AppCompatActivity {
         uiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
         uiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
-        FirebaseInstanceId.getInstance().getToken();
         buttonSetting(login_btn);
         buttonSetting(find_btn);
         buttonSetting(register_btn);
@@ -164,21 +172,16 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onAnimationStart(Animator animator) {
             }
-
             @Override
             public void onAnimationEnd(Animator animator) {
                 btn.setVisibility(View.VISIBLE);
                 btn.animate().translationY(0 - 5 * (context.getResources().getDisplayMetrics().density)).setInterpolator(new DecelerateInterpolator()).setDuration(500).start();
             }
-
             @Override
             public void onAnimationCancel(Animator animator) {
-
             }
-
             @Override
             public void onAnimationRepeat(Animator animator) {
-
             }
         }).start();
     }
@@ -236,21 +239,58 @@ public class LoginActivity extends AppCompatActivity {
             loginCall.enqueue(new Callback<Member>() {
                 @Override
                 public void onResponse(Call<Member> call, Response<Member> response) {
-                    task.onPostExecute(null);
                     Member repo = response.body();
+                    String beforeToken = repo.getP_token();
+                    String afterToken = getSharedPreferences("token", MODE_PRIVATE).getString("token", null);
                     if (repo.getV_num() == -1) {
+                        task.onPostExecute(null);
                         mToast.setText(getString(R.string.login_error));
                         mToast.show();
+                    } else if (!beforeToken.equals(afterToken)) {
+                        task.onPostExecute(null);
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(context, AlertDialog.THEME_HOLO_LIGHT);
+                            dialog.setMessage("기존 디바이스와 연결을 끊고\n새로운 디바이스와 계정을 연동하시겠습니까?").setCancelable(
+                                    false).setPositiveButton("네",
+                                    (dialog1, btnId) -> {
+                                        dialog1.dismiss();
+                                        task.onPreExecute();
+                                        // 로그인에 성공했으나 가져온 토큰의 값이 저장된 토큰의 값과 다를경우
+                                        // (처음 로그인을 했을 경우 or 클라이언트의 토큰 값이 변경되었을 경우)
+                                        // response 받은 v_num과 저장되어있던 p_token을 request로 update 이후
+                                        // 다음 액티비티로 전달하고 실행
+                                        Call<Void> tokenCall = new Retrofit.Builder()
+                                                .baseUrl(BASE + "/")
+                                                .addConverterFactory(GsonConverterFactory.create())
+                                                .build()
+                                                .create(PostToken.class)
+                                                .token(id, pw, beforeToken, afterToken);
+                                        tokenCall.enqueue(new Callback<Void>() {
+                                            @Override
+                                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                                task.onPostExecute(null);
+                                                Intent intent = new Intent(context, VideoActivity.class);
+                                                intent.putExtra("v_num", repo.getV_num());
+                                                intent.putExtra("p_token", afterToken);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                            @Override
+                                            public void onFailure(Call<Void> call, Throwable t) {
+                                                Log.e(TAG, String.valueOf(t));
+                                            }
+                                        });
+                                    }).setNegativeButton("아니오",
+                                    (dialog12, id1) -> dialog12.cancel()).show();
                     } else {
                         // 로그인에 성공하면 response 받은 v_num과 p_token을 다음 액티비티로 전달하고 실행
+                        task.onPostExecute(null);
                         Intent intent = new Intent(context, VideoActivity.class);
                         intent.putExtra("v_num", repo.getV_num());
-                        intent.putExtra("p_token", repo.getP_token());
+                        intent.putExtra("p_token", beforeToken);
                         startActivity(intent);
                         finish();
                     }
                 }
-
                 @Override
                 public void onFailure(Call<Member> call, Throwable t) {
                     Log.e(TAG, String.valueOf(t));
