@@ -57,9 +57,9 @@
         </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
-            android:layout_marginTop="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <android.support.v7.widget.AppCompatCheckBox
@@ -92,7 +92,10 @@
                 android:id="@+id/login_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="12dp"
                 android:text="@string/login_btn"
+                android:textColor="#fff"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:theme="@style/AppTheme.Button.Login" />
 
@@ -100,7 +103,10 @@
                 android:id="@+id/register_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="12dp"
                 android:text="@string/register_btn"
+                android:textColor="#fff"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:theme="@style/AppTheme.Button.Register" />
 
@@ -109,6 +115,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/find_btn"
+                android:textColor="#fff"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:theme="@style/AppTheme.Button.Find" />
 

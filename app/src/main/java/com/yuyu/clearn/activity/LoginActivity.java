@@ -1,7 +1,9 @@
 package com.yuyu.clearn.activity;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -11,8 +13,11 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -53,6 +58,12 @@ public class LoginActivity extends AppCompatActivity {
     AppCompatCheckBox check_btn;
     @BindView(R.id.save_btn)
     AppCompatCheckBox save_btn;
+    @BindView(R.id.login_btn)
+    Button login_btn;
+    @BindView(R.id.find_btn)
+    Button find_btn;
+    @BindView(R.id.register_btn)
+    Button register_btn;
 
     public static final String BASE = "http://192.168.43.79/CLearn";
     private static final String TAG = LoginActivity.class.getSimpleName();
@@ -69,8 +80,16 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         context = this;
+        int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
+        uiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        uiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        uiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         FirebaseMessaging.getInstance().subscribeToTopic("news");
         FirebaseInstanceId.getInstance().getToken();
+        buttonSetting(login_btn);
+        buttonSetting(find_btn);
+        buttonSetting(register_btn);
         mToast = Toast.makeText(context, "null", Toast.LENGTH_SHORT);
         // 아이디 저장, 자동 로그인이 활성화 되어있는지 status로 확인 후 분기에 맞게 실행
         status = getSharedPreferences("login", MODE_PRIVATE).getString("status", NONE);
@@ -136,6 +155,32 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    // 버튼 커스텀 설정
+    public void buttonSetting(Button btn) {
+        btn.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf"));
+        btn.animate().translationY(btn.getBottom() + 100 * (context.getResources().getDisplayMetrics().density)).setInterpolator(new AccelerateInterpolator()).setDuration(0).setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                btn.setVisibility(View.VISIBLE);
+                btn.animate().translationY(0 - 5 * (context.getResources().getDisplayMetrics().density)).setInterpolator(new DecelerateInterpolator()).setDuration(500).start();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        }).start();
     }
 
     // 키보드 내리기

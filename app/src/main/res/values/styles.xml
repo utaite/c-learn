@@ -27,7 +27,7 @@
     </style>
 
     <style name="AppTheme.Button.Find" parent="Widget.AppCompat.Button.Colored">
-        <item name="colorButtonNormal">#A566FF</item>
+        <item name="colorButtonNormal">#3CB371</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
