@@ -23,7 +23,7 @@ public class FirstActivity extends AhoyOnboarderActivity {
     private long currentTime;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
         uiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
