@@ -6,10 +6,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
-import android.widget.Toast;
 
 import com.codemybrainsout.onboarder.AhoyOnboarderActivity;
 import com.codemybrainsout.onboarder.AhoyOnboarderCard;
+import com.sdsmdg.tastytoast.TastyToast;
 import com.yuyu.clearn.R;
 
 import java.util.ArrayList;
@@ -17,7 +17,6 @@ import java.util.List;
 
 public class FirstActivity extends AhoyOnboarderActivity {
 
-    private Toast mToast;
     private long currentTime;
 
     @Override
@@ -28,7 +27,6 @@ public class FirstActivity extends AhoyOnboarderActivity {
         uiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
         uiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-        mToast = Toast.makeText(this, "null", Toast.LENGTH_SHORT);
         // 이미 튜토리얼을 거친 유저인지 start로 확인 후 분기에 맞게 실행
         if (!getSharedPreferences("first", MODE_PRIVATE).getBoolean("start", false)) {
             // 튜토리얼을 거치지 않았다면 초기 화면(사용법)을 보여줌
@@ -74,8 +72,7 @@ public class FirstActivity extends AhoyOnboarderActivity {
     public void onBackPressed() {
         if (currentTime + 2000 < System.currentTimeMillis()) {
             currentTime = System.currentTimeMillis();
-            mToast.setText(getString(R.string.onBackPressed));
-            mToast.show();
+            TastyToast.makeText(getApplicationContext(), getString(R.string.onBackPressed), TastyToast.LENGTH_LONG, TastyToast.WARNING);
         } else {
             super.onBackPressed();
         }

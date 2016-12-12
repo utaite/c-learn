@@ -1,7 +1,6 @@
 package com.yuyu.clearn.activity;
 
 import android.animation.Animator;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -20,8 +19,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.sdsmdg.tastytoast.TastyToast;
 import com.yuyu.clearn.R;
 import com.yuyu.clearn.retrofit.Member;
 import com.yuyu.clearn.view.Task;
@@ -79,7 +79,6 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
     private static final String CHECK = "CHECK", SAVE = "SAVE", NONE = "NONE";
 
-    private Toast mToast;
     private Context context;
     private String id, pw, status;
     private long currentTime;
@@ -90,15 +89,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         context = this;
-        int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
-        uiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        uiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
-        uiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         buttonSetting(login_btn);
         buttonSetting(find_btn);
         buttonSetting(register_btn);
-        mToast = Toast.makeText(context, "null", Toast.LENGTH_SHORT);
         // 아이디 저장, 자동 로그인이 활성화 되어있는지 status로 확인 후 분기에 맞게 실행
         status = getSharedPreferences("login", MODE_PRIVATE).getString("status", NONE);
         id = getSharedPreferences("login", MODE_PRIVATE).getString("id", null);
@@ -158,8 +151,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (currentTime + 2000 < System.currentTimeMillis()) {
             currentTime = System.currentTimeMillis();
-            mToast.setText(getString(R.string.onBackPressed));
-            mToast.show();
+            TastyToast.makeText(context, getString(R.string.onBackPressed), TastyToast.LENGTH_LONG, TastyToast.WARNING);
         } else {
             super.onBackPressed();
         }
@@ -172,14 +164,17 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onAnimationStart(Animator animator) {
             }
+
             @Override
             public void onAnimationEnd(Animator animator) {
                 btn.setVisibility(View.VISIBLE);
                 btn.animate().translationY(0 - 5 * (context.getResources().getDisplayMetrics().density)).setInterpolator(new DecelerateInterpolator()).setDuration(500).start();
             }
+
             @Override
             public void onAnimationCancel(Animator animator) {
             }
+
             @Override
             public void onAnimationRepeat(Animator animator) {
             }
@@ -198,8 +193,7 @@ public class LoginActivity extends AppCompatActivity {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         if (activeNetwork == null) {
-            mToast.setText(getString(R.string.internet_error));
-            mToast.show();
+            TastyToast.makeText(context, getString(R.string.internet_error), TastyToast.LENGTH_LONG, TastyToast.ERROR);
         } else {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
         }
@@ -225,8 +219,7 @@ public class LoginActivity extends AppCompatActivity {
             pw_edit.setError(getString(R.string.error_field_required));
             pw_edit.requestFocus();
         } else if (activeNetwork == null) {
-            mToast.setText(getString(R.string.internet_error));
-            mToast.show();
+            TastyToast.makeText(context, getString(R.string.internet_error), TastyToast.LENGTH_LONG, TastyToast.ERROR);
         } else {
             Task task = new Task(context);
             task.onPreExecute();
@@ -242,48 +235,47 @@ public class LoginActivity extends AppCompatActivity {
                     Member repo = response.body();
                     String beforeToken = repo.getP_token();
                     String afterToken = getSharedPreferences("token", MODE_PRIVATE).getString("token", null);
+                    task.onPostExecute(null);
                     if (repo.getV_num() == -1) {
-                        task.onPostExecute(null);
-                        mToast.setText(getString(R.string.login_error));
-                        mToast.show();
+                        TastyToast.makeText(context, getString(R.string.login_error), TastyToast.LENGTH_LONG, TastyToast.ERROR);
                     } else if (!beforeToken.equals(afterToken)) {
-                        task.onPostExecute(null);
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(context, AlertDialog.THEME_HOLO_LIGHT);
-                            dialog.setMessage("기존 디바이스와 연결을 끊고\n새로운 디바이스와 계정을 연동하시겠습니까?").setCancelable(
-                                    false).setPositiveButton("네",
-                                    (dialog1, btnId) -> {
-                                        dialog1.dismiss();
-                                        task.onPreExecute();
-                                        // 로그인에 성공했으나 가져온 토큰의 값이 저장된 토큰의 값과 다를경우
-                                        // (처음 로그인을 했을 경우 or 클라이언트의 토큰 값이 변경되었을 경우)
-                                        // response 받은 v_num과 저장되어있던 p_token을 request로 update 이후
-                                        // 다음 액티비티로 전달하고 실행
-                                        Call<Void> tokenCall = new Retrofit.Builder()
-                                                .baseUrl(BASE + "/")
-                                                .addConverterFactory(GsonConverterFactory.create())
-                                                .build()
-                                                .create(PostToken.class)
-                                                .token(id, pw, beforeToken, afterToken);
-                                        tokenCall.enqueue(new Callback<Void>() {
-                                            @Override
-                                            public void onResponse(Call<Void> call, Response<Void> response) {
-                                                task.onPostExecute(null);
-                                                Intent intent = new Intent(context, VideoActivity.class);
-                                                intent.putExtra("v_num", repo.getV_num());
-                                                intent.putExtra("p_token", afterToken);
-                                                startActivity(intent);
-                                                finish();
-                                            }
-                                            @Override
-                                            public void onFailure(Call<Void> call, Throwable t) {
-                                                Log.e(TAG, String.valueOf(t));
-                                            }
-                                        });
-                                    }).setNegativeButton("아니오",
-                                    (dialog12, id1) -> dialog12.cancel()).show();
+                        new MaterialDialog.Builder(context)
+                                .content(beforeToken.equals(id) ? getString(R.string.token_ne) : getString(R.string.token_re))
+                                .cancelable(false)
+                                .positiveText(getString(R.string.yes))
+                                .negativeText(getString(R.string.no))
+                                .onPositive((dialog, which) -> {
+                                    dialog.dismiss();
+                                    task.onPreExecute();
+                                    // 로그인에 성공했으나 가져온 토큰의 값이 저장된 토큰의 값과 다를경우
+                                    // (처음 로그인을 했을 경우 or 클라이언트의 토큰 값이 변경되었을 경우)
+                                    // 계정 연동을 시키고 로그인 화면 재실행
+                                    Call<Void> tokenCall = new Retrofit.Builder()
+                                            .baseUrl(BASE + "/")
+                                            .addConverterFactory(GsonConverterFactory.create())
+                                            .build()
+                                            .create(PostToken.class)
+                                            .token(id, pw, afterToken, beforeToken);
+                                    tokenCall.enqueue(new Callback<Void>() {
+                                        @Override
+                                        public void onResponse(Call<Void> call, Response<Void> response) {
+                                            task.onPostExecute(null);
+                                            TastyToast.makeText(context, getString(R.string.login_connect), TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
+                                            startActivity(new Intent(context, LoginActivity.class));
+                                            finish();
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<Void> call, Throwable t) {
+                                            Log.e(TAG, String.valueOf(t));
+                                        }
+                                    });
+                                })
+                                .onNegative((dialog, which) -> dialog.cancel()).show();
+                    } else if (repo.getV_num() == 0) {
+                        TastyToast.makeText(context, getString(R.string.video_error), TastyToast.LENGTH_LONG, TastyToast.CONFUSING);
                     } else {
                         // 로그인에 성공하면 response 받은 v_num과 p_token을 다음 액티비티로 전달하고 실행
-                        task.onPostExecute(null);
                         Intent intent = new Intent(context, VideoActivity.class);
                         intent.putExtra("v_num", repo.getV_num());
                         intent.putExtra("p_token", beforeToken);
@@ -291,6 +283,7 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     }
                 }
+
                 @Override
                 public void onFailure(Call<Member> call, Throwable t) {
                     Log.e(TAG, String.valueOf(t));

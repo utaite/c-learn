@@ -39,6 +39,8 @@ dependencies {
     compile 'com.codemybrainsout.onboarding:onboarder:1.0.3'
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
+    compile 'com.afollestad.material-dialogs:core:0.9.1.0'
+    compile 'com.sdsmdg.tastytoast:tastytoast:0.1.0'
     compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
     compile "com.google.firebase:firebase-messaging:9.0.1"
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
