@@ -151,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (currentTime + 2000 < System.currentTimeMillis()) {
             currentTime = System.currentTimeMillis();
-            TastyToast.makeText(context, getString(R.string.onBackPressed), TastyToast.LENGTH_LONG, TastyToast.WARNING);
+            TastyToast.makeText(context, getString(R.string.onBackPressed), TastyToast.LENGTH_SHORT, TastyToast.WARNING);
         } else {
             super.onBackPressed();
         }
