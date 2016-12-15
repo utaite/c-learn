@@ -24,11 +24,11 @@ public class MainFragment extends Fragment {
     private static final String TAG = MainFragment.class.getSimpleName();
 
     private VrVideoView.Options options;
-    private int count;
+    private int count = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_video, container, false);
+        View view = inflater.inflate(R.layout.fragment, container, false);
         ButterKnife.bind(this, view);
         options = new VrVideoView.Options();
         options.inputFormat = VrVideoView.Options.FORMAT_DEFAULT;
@@ -41,14 +41,14 @@ public class MainFragment extends Fragment {
         }
         video_view.fullScreenDialog.setCancelable(false);
         video_view.fullScreenDialog.setOnKeyListener((dialogInterface, i, keyEvent) -> {
-            if (keyEvent.getAction() == KeyEvent.KEYCODE_BACK) {
+            if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
                 try {
-                    video_view.loadVideoFromAsset((count % 3 == 1) ? "TEST2.mp4" : (count % 3 == 2) ? "TEST3.mp4" : "TEST1.mp4" , options);
+                    video_view.loadVideoFromAsset((count % 3 == 1) ? "TEST2.mp4" : (count % 3 == 2) ? "TEST3.mp4" : "TEST1.mp4", options);
                     count++;
-                    Log.e("COUNT", count + "");
                 } catch (IOException e) {
                     Log.e(TAG, String.valueOf(e));
                 }
+                return false;
             }
             return false;
         });

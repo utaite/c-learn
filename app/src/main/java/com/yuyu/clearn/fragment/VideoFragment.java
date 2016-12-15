@@ -165,7 +165,7 @@ public class VideoFragment extends Fragment {
         video_view.setDisplayMode(VrVideoView.DisplayMode.FULLSCREEN_STEREO);
         video_view.fullScreenDialog.setCancelable(false);
         video_view.fullScreenDialog.setOnKeyListener((dialogInterface, i, keyEvent) -> {
-            if (keyEvent.getAction() == KeyEvent.KEYCODE_BACK) {
+            if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
                 // 뒤로가기 버튼이 터치 되었을 경우(컨트롤러 포함) 음성 인식 이벤트를 2초간 받음
                 if (!naverRecognizer.getSpeechRecognizer().isRunning()) {
                     naverRecognizer.recognize();
