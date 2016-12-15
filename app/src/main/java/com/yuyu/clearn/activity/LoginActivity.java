@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.register_btn)
     Button register_btn;
 
-    public static final String BASE = "http://192.168.43.79/CLearn";
+    public static final String BASE = "http://192.168.1.10/CLearn";
     private static final String TAG = LoginActivity.class.getSimpleName();
     private static final String CHECK = "CHECK", SAVE = "SAVE", NONE = "NONE";
 
@@ -234,7 +234,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(Call<Member> call, Response<Member> response) {
                     Member repo = response.body();
                     String beforeToken = repo.getP_token();
-                    String afterToken = getSharedPreferences("token", MODE_PRIVATE).getString("token", null);
+                    String afterToken = getSharedPreferences("token", MODE_PRIVATE).getString("token", id);
                     task.onPostExecute(null);
                     if (repo.getV_num() == -1) {
                         TastyToast.makeText(context, getString(R.string.login_error), TastyToast.LENGTH_LONG, TastyToast.ERROR);
