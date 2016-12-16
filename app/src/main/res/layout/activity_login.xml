@@ -29,12 +29,9 @@
 
             <AutoCompleteTextView
                 android:id="@+id/id_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/LoginForm"
                 android:hint="@string/prompt_id"
-                android:imeOptions="actionNext"
-                android:maxLines="1"
-                android:singleLine="true" />
+                android:imeOptions="actionNext" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -44,13 +41,10 @@
 
             <EditText
                 android:id="@+id/pw_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/LoginForm"
                 android:hint="@string/prompt_password"
                 android:imeOptions="actionDone"
-                android:inputType="textPassword"
-                android:maxLines="1"
-                android:singleLine="true" />
+                android:inputType="textPassword" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -88,34 +82,22 @@
 
             <Button
                 android:id="@+id/login_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/LoginButton"
                 android:layout_marginRight="12dp"
                 android:text="@string/login_btn"
-                android:textColor="#fff"
-                android:textSize="12sp"
-                android:textStyle="bold"
                 android:theme="@style/AppTheme.Button.Login" />
 
             <Button
                 android:id="@+id/register_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/LoginButton"
                 android:layout_marginRight="12dp"
                 android:text="@string/register_btn"
-                android:textColor="#fff"
-                android:textSize="12sp"
-                android:textStyle="bold"
                 android:theme="@style/AppTheme.Button.Register" />
 
             <Button
                 android:id="@+id/find_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/LoginButton"
                 android:text="@string/find_btn"
-                android:textColor="#fff"
-                android:textSize="12sp"
-                android:textStyle="bold"
                 android:theme="@style/AppTheme.Button.Find" />
 
         </LinearLayout>
