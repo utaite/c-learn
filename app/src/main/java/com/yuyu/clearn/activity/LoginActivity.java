@@ -23,7 +23,7 @@ import android.widget.EditText;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.yuyu.clearn.R;
-import com.yuyu.clearn.retrofit.Member;
+import com.yuyu.clearn.api.retrofit.Member;
 import com.yuyu.clearn.view.Task;
 
 import butterknife.BindView;
@@ -287,6 +287,8 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<Member> call, Throwable t) {
                     Log.e(TAG, String.valueOf(t));
+                    task.onPostExecute(null);
+                    TastyToast.makeText(context, getString(R.string.server_error), TastyToast.LENGTH_LONG, TastyToast.ERROR);
                 }
             });
         }
