@@ -179,6 +179,7 @@
     <orderEntry type="library" exported="" name="play-services-tasks-10.0.1" level="project" />
     <orderEntry type="library" exported="" name="transition-25.0.1" level="project" />
     <orderEntry type="library" exported="" name="onboarder-1.0.3" level="project" />
+    <orderEntry type="library" exported="" name="glide-3.7.0" level="project" />
     <orderEntry type="library" exported="" name="tastytoast-0.1.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-iid-10.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-25.0.1" level="project" />

@@ -12,9 +12,9 @@ import java.nio.ByteOrder;
 // 네이버 음성 인식 라이브러리로 이벤트를 처리하기 위해 구현한 클래스
 public class AudioWriterPCM {
 
-    private final static String TAG = AudioWriterPCM.class.getSimpleName();
+    private final String TAG = AudioWriterPCM.class.getSimpleName();
 
-    private String path, filename;
+    private String path;
     private FileOutputStream speechFile;
 
     public AudioWriterPCM(String path) {
@@ -26,7 +26,7 @@ public class AudioWriterPCM {
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        filename = directory + "/" + sessionId + ".pcm";
+        String filename = directory + "/" + sessionId + ".pcm";
         try {
             speechFile = new FileOutputStream(new File(filename));
         } catch (FileNotFoundException e) {
@@ -36,8 +36,9 @@ public class AudioWriterPCM {
     }
 
     public void close() {
-        if (speechFile == null)
+        if (speechFile == null) {
             return;
+        }
         try {
             speechFile.close();
         } catch (IOException e) {
@@ -46,12 +47,13 @@ public class AudioWriterPCM {
     }
 
     public void write(short[] data) {
-        if (speechFile == null)
+        if (speechFile == null) {
             return;
+        }
         ByteBuffer buffer = ByteBuffer.allocate(data.length * 2);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        for (int i = 0; i < data.length; i++) {
-            buffer.putShort(data[i]);
+        for (short aData : data) {
+            buffer.putShort(aData);
         }
         buffer.flip();
         try {

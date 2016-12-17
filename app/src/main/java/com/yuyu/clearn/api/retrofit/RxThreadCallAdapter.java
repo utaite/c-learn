@@ -12,7 +12,7 @@ import rx.Scheduler;
 
 public class RxThreadCallAdapter extends CallAdapter.Factory {
 
-    RxJavaCallAdapterFactory rxFactory = RxJavaCallAdapterFactory.create();
+    private RxJavaCallAdapterFactory rxFactory = RxJavaCallAdapterFactory.create();
     private Scheduler subscribeScheduler;
     private Scheduler observerScheduler;
 
@@ -27,7 +27,7 @@ public class RxThreadCallAdapter extends CallAdapter.Factory {
         return callAdapter != null ? new ThreadCallAdapter(callAdapter) : null;
     }
 
-    final class ThreadCallAdapter implements CallAdapter<Observable<?>> {
+    private final class ThreadCallAdapter implements CallAdapter<Observable<?>> {
         CallAdapter<Observable<?>> delegateAdapter;
 
         ThreadCallAdapter(CallAdapter<Observable<?>> delegateAdapter) {

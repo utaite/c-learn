@@ -19,8 +19,12 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.yuyu.clearn.R;
 import com.yuyu.clearn.api.retrofit.Member;
@@ -50,12 +54,15 @@ public class LoginActivity extends AppCompatActivity {
     Button find_btn;
     @BindView(R.id.register_btn)
     Button register_btn;
+    @BindView(R.id.login_logo)
+    ImageView login_logo;
 
     private final String TAG = LoginActivity.class.getSimpleName();
     private final String LOGIN = "LOGIN", TOKEN = "TOKEN", STATUS = "STATUS", ID = "ID", PW = "PW", CHECK = "CHECK", SAVE = "SAVE";
-    private final String login = LOGIN.toLowerCase(), token = TOKEN.toLowerCase();
+    private final String login = LOGIN.toLowerCase(), token = TOKEN.toLowerCase(), logo = "login_logo.png";
     private Task task;
     private Context context;
+    private RequestManager requestManager;
     private SharedPreferences preferences;
 
     @Override
@@ -63,15 +70,19 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        RestInterface.init();
         context = this;
+        requestManager = Glide.with(context);
         preferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
+        RestInterface.init();
+        requestManager.load(RestInterface.BASE + RestInterface.RESOURCES + logo)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(login_logo);
         buttonCustomSet(context, Typeface.createFromAsset(getAssets(), Constant.FONT), login_btn, find_btn, register_btn);
         // 키보드 버튼 옵션 설정
-        id_edit.setOnEditorActionListener((v, actionId, event) -> {
-            pw_edit.requestFocus();
-            return true;
-        });
+//        id_edit.setOnEditorActionListener((v, actionId, event) -> {
+//            pw_edit.requestFocus();
+//            return true;
+//        });
 
         // 아이디 저장, 자동 로그인이 활성화 되어있는지 STATUS로 확인 후 분기에 맞게 실행
         Observable.just(preferences.getString(STATUS, null))
@@ -163,7 +174,9 @@ public class LoginActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onError(Throwable e) {
+                                            task.onPostExecute(null);
                                             Log.e(TAG, String.valueOf(e));
+                                            TastyToast.makeText(context, getString(R.string.login_internet_err), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
                                         }
 
                                         @Override
@@ -191,12 +204,12 @@ public class LoginActivity extends AppCompatActivity {
         int v_num = member.getV_num();
         String beforeToken = member.getP_token();
         String afterToken = getSharedPreferences(TOKEN, MODE_PRIVATE).getString(TOKEN, loginValue[0]);
+        // 로그인에 실패했을 경우
         if (v_num == -1) {
             TastyToast.makeText(context, getString(R.string.login_failed), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
 
-            // 로그인에 성공했으나 가져온 토큰의 값이 저장된 토큰의 값과 다를경우
+            // 로그인에 성공했으나 가져온 토큰의 값이 저장된 토큰의 값과 다를 경우
             // (처음 로그인을 했을 경우 or 클라이언트의 토큰 값이 변경되었을 경우)
-            // 계정 연동을 시키고 로그인 화면 재실행
         } else if (!beforeToken.equals(afterToken)) {
             new MaterialDialog.Builder(context)
                     .content(beforeToken.equals(loginValue[0]) ? getString(R.string.login_token_new) : getString(R.string.login_token_change))
@@ -215,7 +228,9 @@ public class LoginActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onError(Throwable e) {
+                                        task.onPostExecute(null);
                                         Log.e(TAG, String.valueOf(e));
+                                        TastyToast.makeText(context, getString(R.string.login_internet_err), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
                                     }
 
                                     @Override
@@ -229,6 +244,7 @@ public class LoginActivity extends AppCompatActivity {
                     })
                     .onNegative((dialog, which) -> dialog.cancel()).show();
 
+            // 로그인에 성공했으나 시청할 영상이 없을 경우
         } else if (v_num == 0) {
             TastyToast.makeText(context, getString(R.string.login_video_err), TastyToast.LENGTH_SHORT, TastyToast.CONFUSING);
 
@@ -280,9 +296,9 @@ public class LoginActivity extends AppCompatActivity {
 
     // 네트워크 연결 여부 확인
     public boolean networkCheck(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null;
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null;
     }
 
 }

@@ -13,7 +13,7 @@ import rx.schedulers.Schedulers;
 
 public class RestInterface {
 
-    public static String BASE = "http://192.168.1.10/CLearn/";
+    public static String BASE = "http://192.168.1.10/CLearn/", RESOURCES = "/resources/";
 
     private static Retrofit retrofit;
 
@@ -30,7 +30,6 @@ public class RestInterface {
     public static Retrofit getRestClient() {
         return retrofit;
     }
-
 
     // FCM token을 사용한 JWT 형식의 로그인 연동
     // id와 password를 서버에 request 이후 일치하는 계정이 있다면 p_token과 v_num을 response 받음
