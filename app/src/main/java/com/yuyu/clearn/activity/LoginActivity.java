@@ -25,18 +25,14 @@ import com.sdsmdg.tastytoast.TastyToast;
 import com.yuyu.clearn.R;
 import com.yuyu.clearn.api.retrofit.Member;
 import com.yuyu.clearn.api.retrofit.RestInterface;
-import com.yuyu.clearn.view.Custom;
+import com.yuyu.clearn.view.Constant;
 import com.yuyu.clearn.view.Task;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
+import rx.Subscriber;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -57,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private final String TAG = LoginActivity.class.getSimpleName();
     private final String LOGIN = "LOGIN", TOKEN = "TOKEN", STATUS = "STATUS", ID = "ID", PW = "PW", CHECK = "CHECK", SAVE = "SAVE";
+    private final String login = LOGIN.toLowerCase(), token = TOKEN.toLowerCase();
     private Task task;
     private Context context;
     private SharedPreferences preferences;
@@ -66,14 +63,16 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        RestInterface.init();
         context = this;
         preferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
-        buttonCustom(context, Typeface.createFromAsset(getAssets(), Custom.FONT), login_btn, find_btn, register_btn);
+        buttonCustomSet(context, Typeface.createFromAsset(getAssets(), Constant.FONT), login_btn, find_btn, register_btn);
         // 키보드 버튼 옵션 설정
         id_edit.setOnEditorActionListener((v, actionId, event) -> {
             pw_edit.requestFocus();
             return true;
         });
+
         // 아이디 저장, 자동 로그인이 활성화 되어있는지 STATUS로 확인 후 분기에 맞게 실행
         Observable.just(preferences.getString(STATUS, null))
                 .filter(s -> s != null)
@@ -85,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                     check_btn.setChecked(group.getKey());
                     save_btn.setChecked(!group.getKey());
                     if (group.getKey()) {
-                        loginPrepare();
+                        loginPrepare(id_edit, pw_edit);
                     }
                 });
     }
@@ -95,10 +94,10 @@ public class LoginActivity extends AppCompatActivity {
     public void onButtonMethod(View view) {
         int vid = view.getId();
         if (vid == R.id.login_btn) {
-            loginPrepare();
+            loginPrepare(id_edit, pw_edit);
         } else if (vid == R.id.register_btn || vid == R.id.find_btn) {
             if (networkCheck(context)) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Custom.BASE + (vid == R.id.register_btn ? "A" : "B"))));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(RestInterface.BASE + (vid == R.id.register_btn ? "A" : "B"))));
             } else {
                 TastyToast.makeText(context, getString(R.string.login_internet_err), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
             }
@@ -111,9 +110,7 @@ public class LoginActivity extends AppCompatActivity {
         if (view.getId() == R.id.check_txt) {
             check_btn.setChecked(!check_btn.isChecked());
         }
-        if (check_btn.isChecked()) {
-            save_btn.setChecked(false);
-        }
+        save_btn.setChecked(false);
     }
 
     // 자동 로그인 설정 / 아이디 저장과 중복되지 않음
@@ -122,80 +119,78 @@ public class LoginActivity extends AppCompatActivity {
         if (view.getId() == R.id.save_txt) {
             save_btn.setChecked(!save_btn.isChecked());
         }
-        if (save_btn.isChecked()) {
-            check_btn.setChecked(false);
-        }
+        check_btn.setChecked(false);
     }
 
     @Override
     public void onBackPressed() {
-        if (Custom.CURRENT_TIME + Custom.BACK_TIME < System.currentTimeMillis()) {
-            Custom.CURRENT_TIME = System.currentTimeMillis();
+        if (Constant.CURRENT_TIME + Constant.BACK_TIME < System.currentTimeMillis()) {
+            Constant.CURRENT_TIME = System.currentTimeMillis();
             TastyToast.makeText(context, getString(R.string.onBackPressed), TastyToast.LENGTH_SHORT, TastyToast.WARNING);
         } else {
             super.onBackPressed();
         }
     }
 
-    public void loginPrepare() {
+    public void loginPrepare(EditText id_edit, EditText pw_edit) {
         if (!networkCheck(context)) {
             TastyToast.makeText(context, getString(R.string.login_internet_err), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
+
         } else {
-            String[] txtValue = new String[2];
+            String[] loginValue = new String[2];
             Observable.just(id_edit, pw_edit)
                     // EditText 공백 여부 확인
                     .filter(editText -> {
-                        if (TextUtils.isEmpty(editText.getText().toString())) {
+                        boolean empty = TextUtils.isEmpty(editText.getText().toString());
+                        if (empty) {
                             editText.setError(getString(R.string.login_required_err));
                             editText.requestFocus();
                         }
-                        return !TextUtils.isEmpty(editText.getText().toString());
+                        return !empty;
                     })
                     .map(editText -> editText.getText().toString())
                     .doOnUnsubscribe(() -> {
-                        if (txtValue[0] != null && txtValue[1] != null) {
+                        if (loginValue.length == 2) {
                             task = new Task(context);
                             task.onPreExecute();
-                            Call<Member> loginCall = new Retrofit.Builder()
-                                    .baseUrl(Custom.BASE + "/")
-                                    .addConverterFactory(GsonConverterFactory.create())
-                                    .build()
+                            RestInterface.getRestClient()
                                     .create(RestInterface.PostLogin.class)
-                                    .login(txtValue[0], txtValue[1]);
-                            loginCall.enqueue(new Callback<Member>() {
-                                @Override
-                                public void onResponse(Call<Member> call, Response<Member> response) {
-                                    task.onPostExecute(null);
-                                    Log.e(txtValue[0], txtValue[1]);
-                                    loginComplete(response.body(), txtValue[0], txtValue[1]);
-                                }
+                                    .login(login, loginValue[0], loginValue[1])
+                                    .subscribe(new Subscriber<Member>() {
+                                        @Override
+                                        public void onCompleted() {
+                                        }
 
-                                @Override
-                                public void onFailure(Call<Member> call, Throwable t) {
-                                    task.onPostExecute(null);
-                                    Log.e(TAG, String.valueOf(t));
-                                    TastyToast.makeText(context, getString(R.string.login_server_err), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
-                                }
-                            });
+                                        @Override
+                                        public void onError(Throwable e) {
+                                            Log.e(TAG, String.valueOf(e));
+                                        }
+
+                                        @Override
+                                        public void onNext(Member member) {
+                                            task.onPostExecute(null);
+                                            loginProcess(member, loginValue);
+                                        }
+                                    });
                         }
                     })
                     .subscribe(s -> {
                         if (s.equals(id_edit.getText().toString())) {
-                            txtValue[0] = s;
+                            loginValue[0] = s;
                             preferences.edit().putString(STATUS, check_btn.isChecked() ? CHECK : save_btn.isChecked() ? SAVE : null).apply();
                             preferences.edit().putString(ID, check_btn.isChecked() ? s : save_btn.isChecked() ? s : null).apply();
                         } else {
-                            txtValue[1] = s;
+                            loginValue[1] = s;
                             preferences.edit().putString(PW, check_btn.isChecked() ? s : null).apply();
                         }
                     });
         }
     }
 
-    public void loginComplete(Member repo, String txtValue0, String txtValue1) {
-        int v_num = repo.getV_num();
-        String beforeToken = repo.getP_token();
-        String afterToken = getSharedPreferences(TOKEN, MODE_PRIVATE).getString(TOKEN, txtValue0);
+    public void loginProcess(Member member, String[] loginValue) {
+        int v_num = member.getV_num();
+        String beforeToken = member.getP_token();
+        String afterToken = getSharedPreferences(TOKEN, MODE_PRIVATE).getString(TOKEN, loginValue[0]);
         if (v_num == -1) {
             TastyToast.makeText(context, getString(R.string.login_failed), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
 
@@ -204,51 +199,51 @@ public class LoginActivity extends AppCompatActivity {
             // 계정 연동을 시키고 로그인 화면 재실행
         } else if (!beforeToken.equals(afterToken)) {
             new MaterialDialog.Builder(context)
-                    .content(beforeToken.equals(txtValue0) ? getString(R.string.login_token_new) : getString(R.string.login_token_change))
+                    .content(beforeToken.equals(loginValue[0]) ? getString(R.string.login_token_new) : getString(R.string.login_token_change))
                     .positiveText(getString(R.string.login_yes))
                     .negativeText(getString(R.string.login_no))
                     .onPositive((dialog, which) -> {
                         dialog.dismiss();
                         task.onPreExecute();
-                        Call<Void> tokenCall = new Retrofit.Builder()
-                                .baseUrl(Custom.BASE + "/")
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build()
+                        RestInterface.getRestClient()
                                 .create(RestInterface.PostToken.class)
-                                .token(txtValue0, txtValue1, afterToken, beforeToken);
+                                .token(token, loginValue[0], loginValue[1], afterToken, beforeToken)
+                                .subscribe(new Subscriber<Void>() {
+                                    @Override
+                                    public void onCompleted() {
+                                    }
 
-                        tokenCall.enqueue(new Callback<Void>() {
-                            @Override
-                            public void onResponse(Call<Void> call, Response<Void> response) {
-                                task.onPostExecute(null);
-                                TastyToast.makeText(context, getString(R.string.login_success), TastyToast.LENGTH_SHORT, TastyToast.SUCCESS);
-                                startActivity(new Intent(context, LoginActivity.class));
-                                finish();
-                            }
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        Log.e(TAG, String.valueOf(e));
+                                    }
 
-                            @Override
-                            public void onFailure(Call<Void> call, Throwable t) {
-                                Log.e(TAG, String.valueOf(t));
-                            }
-                        });
+                                    @Override
+                                    public void onNext(Void aVoid) {
+                                        task.onPostExecute(null);
+                                        TastyToast.makeText(context, getString(R.string.login_success), TastyToast.LENGTH_SHORT, TastyToast.SUCCESS);
+                                        startActivity(new Intent(context, LoginActivity.class));
+                                        finish();
+                                    }
+                                });
                     })
                     .onNegative((dialog, which) -> dialog.cancel()).show();
 
         } else if (v_num == 0) {
             TastyToast.makeText(context, getString(R.string.login_video_err), TastyToast.LENGTH_SHORT, TastyToast.CONFUSING);
 
-        } else {
             // 로그인에 성공하면 response 받은 v_num과 p_token을 다음 액티비티로 전달하고 실행
+        } else {
             Intent intent = new Intent(context, VideoActivity.class);
-            intent.putExtra(Custom.V_NUM, v_num);
-            intent.putExtra(Custom.P_TOKEN, beforeToken);
+            intent.putExtra(Constant.V_NUM, v_num);
+            intent.putExtra(Constant.P_TOKEN, beforeToken);
             startActivity(intent);
             finish();
         }
     }
 
     // 버튼 커스텀 설정
-    public void buttonCustom(Context context, Typeface typeface, Button... btns) {
+    public void buttonCustomSet(Context context, Typeface typeface, Button... btns) {
         Observable.from(btns)
                 .subscribe(btn -> {
                     btn.setTypeface(typeface);

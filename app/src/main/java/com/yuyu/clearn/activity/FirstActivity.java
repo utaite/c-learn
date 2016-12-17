@@ -12,7 +12,7 @@ import com.codemybrainsout.onboarder.AhoyOnboarderActivity;
 import com.codemybrainsout.onboarder.AhoyOnboarderCard;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.yuyu.clearn.R;
-import com.yuyu.clearn.view.Custom;
+import com.yuyu.clearn.view.Constant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +42,7 @@ public class FirstActivity extends AhoyOnboarderActivity {
 
             Observable.from(pages)
                     .doOnUnsubscribe(() -> {
-                        setFont(Typeface.createFromAsset(getAssets(), Custom.FONT));
+                        setFont(Typeface.createFromAsset(getAssets(), Constant.FONT));
                         setFinishButtonTitle(getString(R.string.first_btn));
                         showNavigationControls(true);
                         setGradientBackground();
@@ -76,8 +76,8 @@ public class FirstActivity extends AhoyOnboarderActivity {
 
     @Override
     public void onBackPressed() {
-        if (Custom.CURRENT_TIME + Custom.BACK_TIME < System.currentTimeMillis()) {
-            Custom.CURRENT_TIME = System.currentTimeMillis();
+        if (Constant.CURRENT_TIME + Constant.BACK_TIME < System.currentTimeMillis()) {
+            Constant.CURRENT_TIME = System.currentTimeMillis();
             TastyToast.makeText(context, getString(R.string.onBackPressed), TastyToast.LENGTH_SHORT, TastyToast.WARNING);
         } else {
             super.onBackPressed();

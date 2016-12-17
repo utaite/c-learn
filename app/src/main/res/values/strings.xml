@@ -11,7 +11,6 @@
     <string name="first_3_1">사용법을 모르겠다면?</string>
     <string name="first_3_2">먼저 로그인으로 계정연동 후, \'CLearn\' 페이지에서 시청하고 싶은 영상을 클릭하세요!</string>
 
-
     <string name="_login_id">아이디</string>
     <string name="_login_pw">비밀번호</string>
     <string name="_login_remember_id">아이디 저장</string>
@@ -30,7 +29,6 @@
     <string name="login_token_change">기존 디바이스와 연결을 끊고\n새로운 디바이스와 계정을 연동하시겠습니까?</string>
     <string name="login_yes">네</string>
     <string name="login_no">아니오</string>
-
 
     <string name="dialog_msg">로딩중입니다 ...</string>
 
