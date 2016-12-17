@@ -30,7 +30,7 @@
             <AutoCompleteTextView
                 android:id="@+id/id_edit"
                 style="@style/LoginForm"
-                android:hint="@string/prompt_id"
+                android:hint="@string/_login_id"
                 android:imeOptions="actionNext" />
 
         </android.support.design.widget.TextInputLayout>
@@ -42,7 +42,7 @@
             <EditText
                 android:id="@+id/pw_edit"
                 style="@style/LoginForm"
-                android:hint="@string/prompt_password"
+                android:hint="@string/_login_pw"
                 android:imeOptions="actionDone"
                 android:inputType="textPassword" />
 
@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:checkMark="@+id/check_btn"
                 android:paddingRight="12dp"
-                android:text="@string/remember_id" />
+                android:text="@string/_login_remember_id" />
 
             <android.support.v7.widget.AppCompatCheckBox
                 android:id="@+id/check_btn"
@@ -78,26 +78,26 @@
                 android:layout_height="wrap_content"
                 android:checkMark="@+id/check_btn"
                 android:paddingRight="24dp"
-                android:text="@string/remember_me" />
+                android:text="@string/_login_remember_me" />
 
             <Button
                 android:id="@+id/login_btn"
                 style="@style/LoginButton"
                 android:layout_marginRight="12dp"
-                android:text="@string/login_btn"
+                android:text="@string/_login_login_btn"
                 android:theme="@style/AppTheme.Button.Login" />
 
             <Button
                 android:id="@+id/register_btn"
                 style="@style/LoginButton"
                 android:layout_marginRight="12dp"
-                android:text="@string/register_btn"
+                android:text="@string/_login_register_btn"
                 android:theme="@style/AppTheme.Button.Register" />
 
             <Button
                 android:id="@+id/find_btn"
                 style="@style/LoginButton"
-                android:text="@string/find_btn"
+                android:text="@string/_login_find_btn"
                 android:theme="@style/AppTheme.Button.Find" />
 
         </LinearLayout>

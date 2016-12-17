@@ -14,7 +14,7 @@ public class Task extends AsyncTask<Void, Void, Void> {
 
     public Task(Context context) {
         asyncDialog = new ProgressDialog(context);
-        msg = context.getString(R.string.task_0);
+        msg = context.getString(R.string.dialog_msg);
     }
 
 
