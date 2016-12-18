@@ -13,7 +13,7 @@ import rx.schedulers.Schedulers;
 
 public class RestInterface {
 
-    public static String BASE = "http://192.168.1.10/CLearn/", RESOURCES = "/resources/";
+    public static String BASE = "http://192.168.219.103/CLearn/", RESOURCES = "resources/";
 
     private static Retrofit retrofit;
 

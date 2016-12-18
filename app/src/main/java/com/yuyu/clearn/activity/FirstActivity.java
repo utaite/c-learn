@@ -23,6 +23,8 @@ import rx.Observable;
 public class FirstActivity extends AhoyOnboarderActivity {
 
     private final String FIRST = "FIRST", START = "START";
+    private final int TITLE_TEXT_SIZE = 10, DESC_TEXT_SIZE = 7;
+
     private Context context;
 
     @Override
@@ -55,8 +57,8 @@ public class FirstActivity extends AhoyOnboarderActivity {
                         page.setBackgroundColor(R.color.black_transparent);
                         page.setTitleColor(R.color.white);
                         page.setDescriptionColor(R.color.grey_200);
-                        page.setTitleTextSize(dpToPixels(10, context));
-                        page.setDescriptionTextSize(dpToPixels(7, context));
+                        page.setTitleTextSize(dpToPixels(TITLE_TEXT_SIZE, context));
+                        page.setDescriptionTextSize(dpToPixels(DESC_TEXT_SIZE, context));
                     });
 
         } else {

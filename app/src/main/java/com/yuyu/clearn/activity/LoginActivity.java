@@ -58,11 +58,12 @@ public class LoginActivity extends AppCompatActivity {
     ImageView login_logo;
 
     private final String TAG = LoginActivity.class.getSimpleName();
+    private final String REGISTER_URL = "A", FIND_URL = "B", LOGIN_LOGO_IMG = "login_logo.png";
     private final String LOGIN = "LOGIN", TOKEN = "TOKEN", STATUS = "STATUS", ID = "ID", PW = "PW", CHECK = "CHECK", SAVE = "SAVE";
-    private final String login = LOGIN.toLowerCase(), token = TOKEN.toLowerCase(), logo = "login_logo.png";
+    private final int ANI_DURATION = 500;
+
     private Task task;
     private Context context;
-    private RequestManager requestManager;
     private SharedPreferences preferences;
 
     @Override
@@ -71,19 +72,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         context = this;
-        requestManager = Glide.with(context);
         preferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
         RestInterface.init();
-        requestManager.load(RestInterface.BASE + RestInterface.RESOURCES + logo)
+        RequestManager requestManager = Glide.with(context);
+        requestManager.load(RestInterface.BASE + RestInterface.RESOURCES + LOGIN_LOGO_IMG)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(login_logo);
         buttonCustomSet(context, Typeface.createFromAsset(getAssets(), Constant.FONT), login_btn, find_btn, register_btn);
-        // 키보드 버튼 옵션 설정
-//        id_edit.setOnEditorActionListener((v, actionId, event) -> {
-//            pw_edit.requestFocus();
-//            return true;
-//        });
-
         // 아이디 저장, 자동 로그인이 활성화 되어있는지 STATUS로 확인 후 분기에 맞게 실행
         Observable.just(preferences.getString(STATUS, null))
                 .filter(s -> s != null)
@@ -108,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
             loginPrepare(id_edit, pw_edit);
         } else if (vid == R.id.register_btn || vid == R.id.find_btn) {
             if (networkCheck(context)) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(RestInterface.BASE + (vid == R.id.register_btn ? "A" : "B"))));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(RestInterface.BASE + (vid == R.id.register_btn ? REGISTER_URL : FIND_URL))));
             } else {
                 TastyToast.makeText(context, getString(R.string.login_internet_err), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
             }
@@ -166,7 +161,7 @@ public class LoginActivity extends AppCompatActivity {
                             task.onPreExecute();
                             RestInterface.getRestClient()
                                     .create(RestInterface.PostLogin.class)
-                                    .login(login, loginValue[0], loginValue[1])
+                                    .login(LOGIN.toLowerCase(), loginValue[0], loginValue[1])
                                     .subscribe(new Subscriber<Member>() {
                                         @Override
                                         public void onCompleted() {
@@ -220,7 +215,7 @@ public class LoginActivity extends AppCompatActivity {
                         task.onPreExecute();
                         RestInterface.getRestClient()
                                 .create(RestInterface.PostToken.class)
-                                .token(token, loginValue[0], loginValue[1], afterToken, beforeToken)
+                                .token(TOKEN.toLowerCase(), loginValue[0], loginValue[1], afterToken, beforeToken)
                                 .subscribe(new Subscriber<Void>() {
                                     @Override
                                     public void onCompleted() {
@@ -279,7 +274,7 @@ public class LoginActivity extends AppCompatActivity {
                                     btn.animate()
                                             .translationY(0 - 5 * (context.getResources().getDisplayMetrics().density))
                                             .setInterpolator(new DecelerateInterpolator())
-                                            .setDuration(500)
+                                            .setDuration(ANI_DURATION)
                                             .start();
                                 }
 

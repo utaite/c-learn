@@ -7,12 +7,14 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
 // 어플 첫 실행 시(토큰을 발급 받을 때) 동작
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
+    private final String TOKEN = "TOKEN";
+
     @Override
     public void onTokenRefresh() {
         // 어플 첫 실행 시 토큰을 발급
         // 토큰은 어플이 설치된 해당 디바이스를 식별하는 역할을 수행
         // 그렇게 발급받은 토큰을 SharedPreference 에 저장한 후 추후 로그인 할 때 사용
-        getSharedPreferences("token", MODE_PRIVATE).edit().putString("token", FirebaseInstanceId.getInstance().getToken()).apply();
+        getSharedPreferences(TOKEN, MODE_PRIVATE).edit().putString(TOKEN, FirebaseInstanceId.getInstance().getToken()).apply();
     }
 
 }
