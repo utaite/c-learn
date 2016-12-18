@@ -61,9 +61,7 @@ public class LoginActivity extends AppCompatActivity {
     private final String LOGIN = "LOGIN", TOKEN = "TOKEN", STATUS = "STATUS", ID = "ID", PW = "PW", CHECK = "CHECK", SAVE = "SAVE";
     private final int ANI_DURATION = 500;
 
-    private Task task;
     private Context context;
-    private SharedPreferences preferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,14 +69,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         context = this;
-        preferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
         RestInterface.init();
         Glide.with(context).load(RestInterface.BASE + RestInterface.RESOURCES + LOGIN_LOGO_IMG)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(login_logo);
         buttonCustomSet(context, Typeface.createFromAsset(getAssets(), Constant.FONT), login_btn, find_btn, register_btn);
         // 아이디 저장, 자동 로그인이 활성화 되어있는지 STATUS로 확인 후 분기에 맞게 실행
-        loginDataLoad(preferences.getString(STATUS, null), id_edit, pw_edit);
+        loginDataLoad(getSharedPreferences(LOGIN, MODE_PRIVATE).getString(STATUS, null), id_edit, pw_edit);
     }
 
     @Override
@@ -124,12 +121,13 @@ public class LoginActivity extends AppCompatActivity {
         check_btn.setChecked(false);
     }
 
-    public void loginDataLoad(String data, EditText id_edit, EditText pw_edit) {
-        Observable.just(data)
-                .filter(s -> s != null)
-                .flatMap(s -> Observable.just(s)
-                        .groupBy(status -> status.equals(CHECK)))
+    public void loginDataLoad(String status, EditText id_edit, EditText pw_edit) {
+        Observable.just(status)
+                .filter(str -> str != null)
+                .flatMap(str -> Observable.just(str)
+                        .groupBy(status1 -> status1.equals(CHECK)))
                 .subscribe(group -> {
+                    SharedPreferences preferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
                     id_edit.setText(preferences.getString(ID, null));
                     pw_edit.setText(group.getKey() ? preferences.getString(PW, null) : null);
                     check_btn.setChecked(group.getKey());
@@ -159,7 +157,7 @@ public class LoginActivity extends AppCompatActivity {
                     .map(editText -> editText.getText().toString())
                     .doOnUnsubscribe(() -> {
                         if (loginValue.length == 2) {
-                            task = new Task(context);
+                            Task task = new Task(context);
                             task.onPreExecute();
                             RestInterface.getRestClient()
                                     .create(RestInterface.PostLogin.class)
@@ -185,10 +183,13 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     })
                     .subscribe(s -> {
+                        SharedPreferences preferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
+
                         if (s.equals(id_edit.getText().toString())) {
                             loginValue[0] = s;
                             preferences.edit().putString(STATUS, check_btn.isChecked() ? CHECK : save_btn.isChecked() ? SAVE : null).apply();
                             preferences.edit().putString(ID, check_btn.isChecked() ? s : save_btn.isChecked() ? s : null).apply();
+
                         } else {
                             loginValue[1] = s;
                             preferences.edit().putString(PW, check_btn.isChecked() ? s : null).apply();
@@ -214,6 +215,7 @@ public class LoginActivity extends AppCompatActivity {
                     .negativeText(getString(R.string.login_no))
                     .onPositive((dialog, which) -> {
                         dialog.dismiss();
+                        Task task = new Task(context);
                         task.onPreExecute();
                         RestInterface.getRestClient()
                                 .create(RestInterface.PostToken.class)
