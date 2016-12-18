@@ -32,9 +32,30 @@ public class FirstActivity extends AhoyOnboarderActivity {
         super.onCreate(savedInstanceState);
         context = this;
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION ^ View.SYSTEM_UI_FLAG_FULLSCREEN ^ View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        startCheck(getSharedPreferences(FIRST, MODE_PRIVATE).getBoolean(START, false));
+    }
 
+    @Override
+    public void onFinishButtonPressed() {
+        // Finish 버튼을 눌렀다면 튜토리얼을 완료한 상태로 저장
+        getSharedPreferences(FIRST, MODE_PRIVATE).edit().putBoolean(START, true).apply();
+        startActivity(new Intent(context, LoginActivity.class));
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (Constant.CURRENT_TIME + Constant.BACK_TIME < System.currentTimeMillis()) {
+            Constant.CURRENT_TIME = System.currentTimeMillis();
+            TastyToast.makeText(context, getString(R.string.onBackPressed), TastyToast.LENGTH_SHORT, TastyToast.WARNING);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public void startCheck(boolean start) {
         // 이미 튜토리얼을 거친 유저인지 START로 확인 후 분기에 맞게 실행
-        if (!getSharedPreferences(FIRST, MODE_PRIVATE).getBoolean(START, false)) {
+        if (!start) {
             // 튜토리얼을 거치지 않았다면 초기 화면(사용법)을 보여줌
             // 튜토리얼로 보여줄 View 객체 생성 및 값 설정
             List<AhoyOnboarderCard> pages = new ArrayList<>(
@@ -65,24 +86,6 @@ public class FirstActivity extends AhoyOnboarderActivity {
             // 튜토리얼을 이미 거쳤다면 바로 로그인 액티비티로 이동
             startActivity(new Intent(context, LoginActivity.class));
             finish();
-        }
-    }
-
-    @Override
-    public void onFinishButtonPressed() {
-        // Finish 버튼을 눌렀다면 튜토리얼을 완료한 상태로 저장
-        getSharedPreferences(FIRST, MODE_PRIVATE).edit().putBoolean(START, true).apply();
-        startActivity(new Intent(context, LoginActivity.class));
-        finish();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (Constant.CURRENT_TIME + Constant.BACK_TIME < System.currentTimeMillis()) {
-            Constant.CURRENT_TIME = System.currentTimeMillis();
-            TastyToast.makeText(context, getString(R.string.onBackPressed), TastyToast.LENGTH_SHORT, TastyToast.WARNING);
-        } else {
-            super.onBackPressed();
         }
     }
 

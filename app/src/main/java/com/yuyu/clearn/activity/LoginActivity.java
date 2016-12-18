@@ -23,7 +23,6 @@ import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.yuyu.clearn.R;
@@ -74,25 +73,22 @@ public class LoginActivity extends AppCompatActivity {
         context = this;
         preferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
         RestInterface.init();
-        RequestManager requestManager = Glide.with(context);
-        requestManager.load(RestInterface.BASE + RestInterface.RESOURCES + LOGIN_LOGO_IMG)
+        Glide.with(context).load(RestInterface.BASE + RestInterface.RESOURCES + LOGIN_LOGO_IMG)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(login_logo);
         buttonCustomSet(context, Typeface.createFromAsset(getAssets(), Constant.FONT), login_btn, find_btn, register_btn);
         // 아이디 저장, 자동 로그인이 활성화 되어있는지 STATUS로 확인 후 분기에 맞게 실행
-        Observable.just(preferences.getString(STATUS, null))
-                .filter(s -> s != null)
-                .flatMap(s -> Observable.just(s)
-                        .groupBy(status -> status.equals(CHECK)))
-                .subscribe(group -> {
-                    id_edit.setText(preferences.getString(ID, null));
-                    pw_edit.setText(group.getKey() ? preferences.getString(PW, null) : null);
-                    check_btn.setChecked(group.getKey());
-                    save_btn.setChecked(!group.getKey());
-                    if (group.getKey()) {
-                        loginPrepare(id_edit, pw_edit);
-                    }
-                });
+        loginDataLoad(preferences.getString(STATUS, null), id_edit, pw_edit);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (Constant.CURRENT_TIME + Constant.BACK_TIME < System.currentTimeMillis()) {
+            Constant.CURRENT_TIME = System.currentTimeMillis();
+            TastyToast.makeText(context, getString(R.string.onBackPressed), TastyToast.LENGTH_SHORT, TastyToast.WARNING);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     // OnClick 메소드 설정
@@ -128,14 +124,20 @@ public class LoginActivity extends AppCompatActivity {
         check_btn.setChecked(false);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (Constant.CURRENT_TIME + Constant.BACK_TIME < System.currentTimeMillis()) {
-            Constant.CURRENT_TIME = System.currentTimeMillis();
-            TastyToast.makeText(context, getString(R.string.onBackPressed), TastyToast.LENGTH_SHORT, TastyToast.WARNING);
-        } else {
-            super.onBackPressed();
-        }
+    public void loginDataLoad(String data, EditText id_edit, EditText pw_edit) {
+        Observable.just(data)
+                .filter(s -> s != null)
+                .flatMap(s -> Observable.just(s)
+                        .groupBy(status -> status.equals(CHECK)))
+                .subscribe(group -> {
+                    id_edit.setText(preferences.getString(ID, null));
+                    pw_edit.setText(group.getKey() ? preferences.getString(PW, null) : null);
+                    check_btn.setChecked(group.getKey());
+                    save_btn.setChecked(!group.getKey());
+                    if (group.getKey()) {
+                        loginPrepare(id_edit, pw_edit);
+                    }
+                });
     }
 
     public void loginPrepare(EditText id_edit, EditText pw_edit) {
