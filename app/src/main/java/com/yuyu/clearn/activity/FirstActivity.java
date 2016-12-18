@@ -12,7 +12,7 @@ import com.codemybrainsout.onboarder.AhoyOnboarderActivity;
 import com.codemybrainsout.onboarder.AhoyOnboarderCard;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.yuyu.clearn.R;
-import com.yuyu.clearn.view.Constant;
+import com.yuyu.clearn.custom.Constant;
 
 import java.util.ArrayList;
 import java.util.Arrays;

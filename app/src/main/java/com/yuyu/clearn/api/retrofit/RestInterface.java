@@ -17,7 +17,7 @@ public class RestInterface {
 
     private static Retrofit retrofit;
 
-    // Retrofit 객체 생성 후 싱글톤으로 return하며 사용
+    // Retrofit 객체 생성 후 싱글톤으로 return
     public static void init() {
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE)

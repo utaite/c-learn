@@ -4,7 +4,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 // Realm DB를 사용하기 위해 구현한 클래스
-public class User extends RealmObject {
+public class UserVO extends RealmObject {
 
     @PrimaryKey
     private int number;

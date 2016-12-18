@@ -1,4 +1,4 @@
-package com.yuyu.clearn.view;
+package com.yuyu.clearn.custom;
 
 public class Constant {
 

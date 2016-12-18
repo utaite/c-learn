@@ -1,4 +1,4 @@
-package com.yuyu.clearn.view;
+package com.yuyu.clearn.custom;
 
 import android.app.ProgressDialog;
 import android.content.Context;

@@ -28,8 +28,8 @@ import com.sdsmdg.tastytoast.TastyToast;
 import com.yuyu.clearn.R;
 import com.yuyu.clearn.api.retrofit.Member;
 import com.yuyu.clearn.api.retrofit.RestInterface;
-import com.yuyu.clearn.view.Constant;
-import com.yuyu.clearn.view.Task;
+import com.yuyu.clearn.custom.Constant;
+import com.yuyu.clearn.custom.Task;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

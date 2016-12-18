@@ -41,7 +41,8 @@ public class RxThreadCallAdapter extends CallAdapter.Factory {
 
         @Override
         public <T> Observable<?> adapt(Call<T> call) {
-            return delegateAdapter.adapt(call).subscribeOn(subscribeScheduler)
+            return delegateAdapter.adapt(call)
+                    .subscribeOn(subscribeScheduler)
                     .observeOn(observerScheduler);
         }
     }
