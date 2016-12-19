@@ -33,7 +33,7 @@ public class RestInterface {
     }
 
     // FCM token을 사용한 JWT 형식의 로그인 연동
-    // id와 password를 서버에 request 이후 일치하는 계정이 있다면 p_token과 v_num을 response 받음
+    // id와 password를 서버에 request 이후 일치하는 계정이 있다면 p_token과 v_num을 response
     public interface PostLogin {
         @FormUrlEncoded
         @POST("api/{what}")
@@ -57,7 +57,7 @@ public class RestInterface {
     }
 
     // 이전 로그인 액티비티에서 전달받은 값 v_num과 p_token을 서버에 request 이후
-    // 일치하는 데이터의 여러 정보를 response 받음
+    // 일치하는 데이터의 여러 정보를 response
     public interface PostVideo {
         @FormUrlEncoded
         @POST("api/{what}")
@@ -67,8 +67,8 @@ public class RestInterface {
                 @Field("p_token") String p_token);
     }
 
-    // 동영상 시청이 끝났을 경우 v_num을 request하여
-    // 해당 v_num을 가진 동영상의 v_finish를 Y로 update함
+    // 동영상 시청이 끝났을 경우 v_num을 request 이후
+    // 해당 v_num을 가진 동영상의 v_finish를 Y로 update
     public interface PostFinish {
         @FormUrlEncoded
         @POST("api/{what}")
@@ -77,8 +77,8 @@ public class RestInterface {
                 @Field("v_num") int v_num);
     }
 
-    // 동영상 시청이 중단되었을 경우 v_num과 v_ctime을 request하여
-    // 해당 v_num을 가진 동영상의 v_ctime을 update함
+    // 동영상 시청이 중단되었을 경우 v_num과 v_ctime을 request 이후
+    // 해당 v_num을 가진 동영상의 v_ctime을 update
     public interface PostSave {
         @FormUrlEncoded
         @POST("api/{what}")
@@ -88,6 +88,8 @@ public class RestInterface {
                 @Field("v_ctime") long v_ctime);
     }
 
+    // 어플이 종료되었을 경우 p_token과 Realm DB의 모든 데이터를
+    // request
     public interface PostResult {
         @FormUrlEncoded
         @POST("api/{what}")

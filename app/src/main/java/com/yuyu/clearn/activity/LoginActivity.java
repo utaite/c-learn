@@ -87,9 +87,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // OnClick 메소드 설정
+    // 로그인, 회원가입, ID PW 찾기 버튼 설정
     @OnClick({R.id.login_btn, R.id.register_btn, R.id.find_btn})
-    public void onButtonMethod(View view) {
+    public void onButton(View view) {
         int vid = view.getId();
         if (vid == R.id.login_btn) {
             loginPrepare(id_edit, pw_edit);
@@ -104,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // 아이디 저장 설정 / 자동 로그인과 중복되지 않음
     @OnClick({R.id.check_btn, R.id.check_txt})
-    public void onCheckMethod(View view) {
+    public void onCheck(View view) {
         if (view.getId() == R.id.check_txt) {
             check_btn.setChecked(!check_btn.isChecked());
         }
@@ -113,13 +113,14 @@ public class LoginActivity extends AppCompatActivity {
 
     // 자동 로그인 설정 / 아이디 저장과 중복되지 않음
     @OnClick({R.id.save_btn, R.id.save_txt})
-    public void onSaveMethod(View view) {
+    public void onSave(View view) {
         if (view.getId() == R.id.save_txt) {
             save_btn.setChecked(!save_btn.isChecked());
         }
         check_btn.setChecked(false);
     }
 
+    // 아이디 저장 or 자동 로그인 실행
     public void loginDataLoad(String status, EditText id_edit, EditText pw_edit) {
         Observable.just(status)
                 .filter(str -> str != null)
@@ -137,6 +138,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    // 로그인 시작과 빈칸 체크
     public void loginPrepare(EditText id_edit, EditText pw_edit) {
         if (!networkCheck(context)) {
             TastyToast.makeText(context, getString(R.string.login_internet_err), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
@@ -197,6 +199,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // 분기점 4가지에 따른 각각의 로그인 처리
     public void loginProcess(MemberVO memberVO, String[] loginValue) {
         int v_num = memberVO.getV_num();
         String beforeToken = memberVO.getP_token();
