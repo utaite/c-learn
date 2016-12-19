@@ -3349,7 +3349,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="407" y="106" width="1212" height="929" extended-state="0" />
+    <frame x="407" y="106" width="1212" height="929" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
