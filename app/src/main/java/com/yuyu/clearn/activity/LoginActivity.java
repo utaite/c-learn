@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         context = this;
         RestInterface.init();
-        Glide.with(context).load(RestInterface.BASE + RestInterface.RESOURCES + LOGIN_LOGO_IMG)
+        Glide.with(context).load(RestInterface.BASE + RestInterface.RESOURCES + RestInterface.IMAGE + LOGIN_LOGO_IMG)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(login_logo);
         buttonCustomSet(context, Typeface.createFromAsset(getAssets(), Constant.FONT), login_btn, find_btn, register_btn);
@@ -156,7 +156,7 @@ public class LoginActivity extends AppCompatActivity {
                     })
                     .map(editText -> editText.getText().toString())
                     .doOnUnsubscribe(() -> {
-                        if (loginValue.length == 2) {
+                        if (loginValue[0] != null && loginValue[1] != null) {
                             Task task = new Task(context);
                             task.onPreExecute();
                             RestInterface.getRestClient()

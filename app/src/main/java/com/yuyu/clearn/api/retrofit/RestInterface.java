@@ -13,7 +13,8 @@ import rx.schedulers.Schedulers;
 
 public class RestInterface {
 
-    public static String BASE = "http://192.168.219.103/CLearn/", RESOURCES = "resources/";
+    public static String BASE = "http://192.168.0.168/CLearn/", RESOURCES = "resources/", IMAGE = "image/", VIDEO = "video/";
+    public static String MAIN_SCREEN = "Unity.mp4";
 
     private static Retrofit retrofit;
 
@@ -84,7 +85,15 @@ public class RestInterface {
         Observable<Void> save(
                 @Path("what") String what,
                 @Field("v_num") int v_num,
-                @Field("v_ctime") long v_ctime,
+                @Field("v_ctime") long v_ctime);
+    }
+
+    public interface PostResult {
+        @FormUrlEncoded
+        @POST("api/{what}")
+        Observable<Void> result(
+                @Path("what") String what,
+                @Field("p_token") String p_token,
                 @Field("result") String result);
     }
 
