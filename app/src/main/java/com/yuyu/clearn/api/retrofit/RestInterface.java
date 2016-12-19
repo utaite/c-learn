@@ -14,7 +14,7 @@ import rx.schedulers.Schedulers;
 public class RestInterface {
 
     public static String BASE = "http://192.168.0.168/CLearn/", RESOURCES = "resources/", IMAGE = "image/", VIDEO = "video/";
-    public static String MAIN_SCREEN = "Unity.mp4";
+    public static String REGISTER_URL = "A", FIND_URL = "B", LOGIN_LOGO_IMG = "login_logo.png", MAIN_SCREEN = "Unity.mp4";
 
     private static Retrofit retrofit;
 
@@ -37,7 +37,7 @@ public class RestInterface {
     public interface PostLogin {
         @FormUrlEncoded
         @POST("api/{what}")
-        Observable<Member> login(
+        Observable<MemberVO> login(
                 @Path("what") String what,
                 @Field("p_id") String id,
                 @Field("p_pw") String pw);
@@ -61,7 +61,7 @@ public class RestInterface {
     public interface PostVideo {
         @FormUrlEncoded
         @POST("api/{what}")
-        Observable<Member> video(
+        Observable<MemberVO> video(
                 @Path("what") String what,
                 @Field("v_num") int v_num,
                 @Field("p_token") String p_token);

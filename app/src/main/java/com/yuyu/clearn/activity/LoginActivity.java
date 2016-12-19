@@ -26,7 +26,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.yuyu.clearn.R;
-import com.yuyu.clearn.api.retrofit.Member;
+import com.yuyu.clearn.api.retrofit.MemberVO;
 import com.yuyu.clearn.api.retrofit.RestInterface;
 import com.yuyu.clearn.custom.Constant;
 import com.yuyu.clearn.custom.Task;
@@ -57,7 +57,6 @@ public class LoginActivity extends AppCompatActivity {
     ImageView login_logo;
 
     private final String TAG = LoginActivity.class.getSimpleName();
-    private final String REGISTER_URL = "A", FIND_URL = "B", LOGIN_LOGO_IMG = "login_logo.png";
     private final String LOGIN = "LOGIN", TOKEN = "TOKEN", STATUS = "STATUS", ID = "ID", PW = "PW", CHECK = "CHECK", SAVE = "SAVE";
     private final int ANI_DURATION = 500;
 
@@ -70,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         context = this;
         RestInterface.init();
-        Glide.with(context).load(RestInterface.BASE + RestInterface.RESOURCES + RestInterface.IMAGE + LOGIN_LOGO_IMG)
+        Glide.with(context).load(RestInterface.BASE + RestInterface.RESOURCES + RestInterface.IMAGE + RestInterface.LOGIN_LOGO_IMG)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(login_logo);
         buttonCustomSet(context, Typeface.createFromAsset(getAssets(), Constant.FONT), login_btn, find_btn, register_btn);
@@ -96,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
             loginPrepare(id_edit, pw_edit);
         } else if (vid == R.id.register_btn || vid == R.id.find_btn) {
             if (networkCheck(context)) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(RestInterface.BASE + (vid == R.id.register_btn ? REGISTER_URL : FIND_URL))));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(RestInterface.BASE + (vid == R.id.register_btn ? RestInterface.REGISTER_URL : RestInterface.FIND_URL))));
             } else {
                 TastyToast.makeText(context, getString(R.string.login_internet_err), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
             }
@@ -162,7 +161,7 @@ public class LoginActivity extends AppCompatActivity {
                             RestInterface.getRestClient()
                                     .create(RestInterface.PostLogin.class)
                                     .login(LOGIN.toLowerCase(), loginValue[0], loginValue[1])
-                                    .subscribe(new Subscriber<Member>() {
+                                    .subscribe(new Subscriber<MemberVO>() {
                                         @Override
                                         public void onCompleted() {
                                         }
@@ -175,9 +174,9 @@ public class LoginActivity extends AppCompatActivity {
                                         }
 
                                         @Override
-                                        public void onNext(Member member) {
+                                        public void onNext(MemberVO memberVO) {
                                             task.onPostExecute(null);
-                                            loginProcess(member, loginValue);
+                                            loginProcess(memberVO, loginValue);
                                         }
                                     });
                         }
@@ -198,9 +197,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void loginProcess(Member member, String[] loginValue) {
-        int v_num = member.getV_num();
-        String beforeToken = member.getP_token();
+    public void loginProcess(MemberVO memberVO, String[] loginValue) {
+        int v_num = memberVO.getV_num();
+        String beforeToken = memberVO.getP_token();
         String afterToken = getSharedPreferences(TOKEN, MODE_PRIVATE).getString(TOKEN, loginValue[0]);
         // 로그인에 실패했을 경우
         if (v_num == -1) {
