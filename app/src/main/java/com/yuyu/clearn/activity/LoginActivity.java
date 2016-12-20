@@ -1,3 +1,4 @@
+
 package com.yuyu.clearn.activity;
 
 import android.animation.Animator;
