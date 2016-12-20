@@ -82,7 +82,7 @@ public class FirstActivity extends AhoyOnboarderActivity {
                         page.setDescriptionTextSize(dpToPixels(DESC_TEXT_SIZE, context));
                     });
 
-        // 튜토리얼을 이미 거쳤다면 바로 로그인 액티비티로 이동
+            // 튜토리얼을 이미 거쳤다면 바로 로그인 액티비티로 이동
         } else {
             startActivity(new Intent(context, LoginActivity.class));
             finish();
