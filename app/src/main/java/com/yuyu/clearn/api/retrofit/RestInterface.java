@@ -14,7 +14,7 @@ import rx.schedulers.Schedulers;
 public class RestInterface {
 
     // MAIN_SCREEN_FLAG_3, VIDEO_SCREEN_MATH, BYE
-    public static String BASE = "http://192.168.1.10/CLearn/", RESOURCES = "resources/", IMAGE = "image/", VIDEO = "video/";
+    public static String BASE = "http://192.168.0.111/CLearn/", RESOURCES = "resources/", IMAGE = "image/", VIDEO = "video/";
     public static String REGISTER_URL = "A", FIND_URL = "B", LOGIN_LOGO_IMG = "login_logo.png";
     public static String MAIN_SCREEN = "Main_Screen.mp4";
     public static String VIDEO_SCREEN_KOREAN = "Video_Screen_Korean.mp4", VIDEO_SCREEN_MATH = "Video_Screen_Math.mp4";

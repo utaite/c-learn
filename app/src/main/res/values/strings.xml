@@ -33,16 +33,4 @@
 
     <string name="dialog_msg">로딩중입니다 ...</string>
 
-
-    <string name="FIRST">FIRST</string>
-    <string name="START">START</string>
-
-    <string name="LOGIN">LOGIN</string>
-    <string name="TOKEN">TOKEN</string>
-    <string name="STATUS">STATUS</string>
-    <string name="ID">ID</string>
-    <string name="PW">PW</string>
-    <string name="CHECK">CHECK</string>
-    <string name="SAVE">SAVE</string>
-
 </resources>

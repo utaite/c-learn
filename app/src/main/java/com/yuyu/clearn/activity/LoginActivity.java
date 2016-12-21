@@ -58,6 +58,8 @@ public class LoginActivity extends AppCompatActivity {
     ImageView login_logo;
 
     private final String TAG = LoginActivity.class.getSimpleName();
+
+    private final String LOGIN = "LOGIN", TOKEN = "TOKEN", STATUS = "STATUS", ID = "ID", PW = "PW", CHECK = "CHECK", SAVE = "SAVE";
     private final int ANI_DURATION = 500;
 
     private Context context;
@@ -74,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                 .into(login_logo);
         buttonCustomSet(context, Typeface.createFromAsset(getAssets(), Constant.FONT), login_btn, find_btn, register_btn);
         // 아이디 저장, 자동 로그인이 활성화 되어있는지 STATUS로 확인 후 분기에 맞게 실행
-        loginDataLoad(getSharedPreferences(getString(R.string.LOGIN), MODE_PRIVATE).getString(getString(R.string.STATUS), null), id_edit, pw_edit);
+        loginDataLoad(getSharedPreferences(LOGIN, MODE_PRIVATE).getString(STATUS, null), id_edit, pw_edit);
     }
 
     @Override
@@ -125,11 +127,11 @@ public class LoginActivity extends AppCompatActivity {
         Observable.just(status)
                 .filter(str -> str != null)
                 .flatMap(str -> Observable.just(str)
-                        .groupBy(status1 -> status1.equals(getString(R.string.CHECK))))
+                        .groupBy(status1 -> status1.equals(CHECK)))
                 .subscribe(group -> {
-                    SharedPreferences preferences = getSharedPreferences(getString(R.string.LOGIN), MODE_PRIVATE);
-                    id_edit.setText(preferences.getString(getString(R.string.ID), null));
-                    pw_edit.setText(group.getKey() ? preferences.getString(getString(R.string.PW), null) : null);
+                    SharedPreferences preferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
+                    id_edit.setText(preferences.getString(ID, null));
+                    pw_edit.setText(group.getKey() ? preferences.getString(PW, null) : null);
                     check_btn.setChecked(group.getKey());
                     save_btn.setChecked(!group.getKey());
                     if (group.getKey()) {
@@ -162,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
                             task.onPreExecute();
                             RestInterface.getRestClient()
                                     .create(RestInterface.PostLogin.class)
-                                    .login(getString(R.string.LOGIN).toLowerCase(), loginValue[0], loginValue[1])
+                                    .login(LOGIN.toLowerCase(), loginValue[0], loginValue[1])
                                     .subscribe(new Subscriber<MemberVO>() {
                                         @Override
                                         public void onCompleted() {
@@ -184,16 +186,16 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     })
                     .subscribe(s -> {
-                        SharedPreferences preferences = getSharedPreferences(getString(R.string.LOGIN), MODE_PRIVATE);
+                        SharedPreferences preferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
 
                         if (s.equals(id_edit.getText().toString())) {
                             loginValue[0] = s;
-                            preferences.edit().putString(getString(R.string.STATUS), check_btn.isChecked() ? getString(R.string.CHECK) : save_btn.isChecked() ? getString(R.string.SAVE) : null).apply();
-                            preferences.edit().putString(getString(R.string.ID), check_btn.isChecked() ? s : save_btn.isChecked() ? s : null).apply();
+                            preferences.edit().putString(STATUS, check_btn.isChecked() ? CHECK : save_btn.isChecked() ? SAVE : null).apply();
+                            preferences.edit().putString(ID, check_btn.isChecked() ? s : save_btn.isChecked() ? s : null).apply();
 
                         } else {
                             loginValue[1] = s;
-                            preferences.edit().putString(getString(R.string.PW), check_btn.isChecked() ? s : null).apply();
+                            preferences.edit().putString(PW, check_btn.isChecked() ? s : null).apply();
                         }
                     });
         }
@@ -203,7 +205,7 @@ public class LoginActivity extends AppCompatActivity {
     public void loginProcess(MemberVO memberVO, String[] loginValue) {
         int v_num = memberVO.getV_num();
         String beforeToken = memberVO.getP_token();
-        String afterToken = getSharedPreferences(getString(R.string.TOKEN), MODE_PRIVATE).getString(getString(R.string.TOKEN), loginValue[0]);
+        String afterToken = getSharedPreferences(TOKEN, MODE_PRIVATE).getString(TOKEN, loginValue[0]);
         // 로그인에 실패했을 경우
         if (v_num == -1) {
             TastyToast.makeText(context, getString(R.string.login_failed), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
@@ -221,7 +223,7 @@ public class LoginActivity extends AppCompatActivity {
                         task.onPreExecute();
                         RestInterface.getRestClient()
                                 .create(RestInterface.PostToken.class)
-                                .token(getString(R.string.TOKEN).toLowerCase(), loginValue[0], loginValue[1], afterToken, beforeToken)
+                                .token(TOKEN.toLowerCase(), loginValue[0], loginValue[1], afterToken, beforeToken)
                                 .subscribe(new Subscriber<Void>() {
                                     @Override
                                     public void onCompleted() {

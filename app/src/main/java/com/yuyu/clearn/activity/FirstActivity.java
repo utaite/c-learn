@@ -22,6 +22,7 @@ import rx.Observable;
 
 public class FirstActivity extends AhoyOnboarderActivity {
 
+    private final String FIRST = "FIRST", START = "START";
     private final int TITLE_TEXT_SIZE = 10, DESC_TEXT_SIZE = 7;
 
     private Context context;
@@ -31,13 +32,13 @@ public class FirstActivity extends AhoyOnboarderActivity {
         super.onCreate(savedInstanceState);
         context = this;
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION ^ View.SYSTEM_UI_FLAG_FULLSCREEN ^ View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        startCheck(getSharedPreferences(getString(R.string.FIRST), MODE_PRIVATE).getBoolean(getString(R.string.START), false));
+        startCheck(getSharedPreferences(FIRST, MODE_PRIVATE).getBoolean(START, false));
     }
 
     // Finish 버튼을 눌렀다면 튜토리얼을 완료한 상태로 저장
     @Override
     public void onFinishButtonPressed() {
-        getSharedPreferences(getString(R.string.FIRST), MODE_PRIVATE).edit().putBoolean(getString(R.string.START), true).apply();
+        getSharedPreferences(FIRST, MODE_PRIVATE).edit().putBoolean(START, true).apply();
         startActivity(new Intent(context, LoginActivity.class));
         finish();
     }
