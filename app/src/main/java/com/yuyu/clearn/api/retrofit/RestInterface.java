@@ -16,7 +16,7 @@ public class RestInterface {
     // MAIN_SCREEN_FLAG_3, VIDEO_SCREEN_MATH, BYE
     public static String BASE = "http://192.168.1.10/CLearn/", RESOURCES = "resources/", IMAGE = "image/", VIDEO = "video/";
     public static String REGISTER_URL = "A", FIND_URL = "B", LOGIN_LOGO_IMG = "login_logo.png";
-    public static String MAIN_SCREEN = "Main_Screen.mp4", MAIN_SCREEN_FLAG_1 = "Main_Screen_Flag_1.mp4", MAIN_SCREEN_FLAG_2 = "Main_Screen_Flag_2.mp4", MAIN_SCREEN_FLAG_3 = "Main_Screen_Flag_3.mp4";
+    public static String MAIN_SCREEN = "Main_Screen.mp4";
     public static String VIDEO_SCREEN_KOREAN = "Video_Screen_Korean.mp4", VIDEO_SCREEN_MATH = "Video_Screen_Math.mp4";
     public static String QUIZ_1 = "Quiz_1.mp4", QUIZ_2 = "Quiz_2.mp4", QUIZ_3 = "Quiz_3.mp4", QUIZ_4 = "Quiz_4.mp4";
     public static String DESTROY = "Destroy.mp4", YES = "Yes.mp4", NO = "No.mp4", BYE = "Bye.mp4";
