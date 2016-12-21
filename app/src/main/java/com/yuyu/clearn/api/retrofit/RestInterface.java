@@ -11,15 +11,13 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+// Restful 통신에 필요한 데이터, 객체, 인터페이스 등의 자원을 모으기 위해 구현한 클래스
 public class RestInterface {
 
-    // MAIN_SCREEN_FLAG_3, VIDEO_SCREEN_MATH, BYE
     public static String BASE = "http://192.168.0.111/CLearn/", RESOURCES = "resources/", IMAGE = "image/", VIDEO = "video/";
     public static String REGISTER_URL = "A", FIND_URL = "B", LOGIN_LOGO_IMG = "login_logo.png";
-    public static String MAIN_SCREEN = "Main_Screen.mp4";
-    public static String VIDEO_SCREEN_KOREAN = "Video_Screen_Korean.mp4", VIDEO_SCREEN_MATH = "Video_Screen_Math.mp4";
-    public static String QUIZ_1 = "Quiz_1.mp4", QUIZ_2 = "Quiz_2.mp4", QUIZ_3 = "Quiz_3.mp4", QUIZ_4 = "Quiz_4.mp4";
-    public static String DESTROY = "Destroy.mp4", YES = "Yes.mp4", NO = "No.mp4", BYE = "Bye.mp4";
+    public static String MAIN_SCREEN = "Main_Screen.mp4", VIDEO_SCREEN_KOREAN = "Video_Screen_Korean.mp4", VIDEO_SCREEN_MATH = "Video_Screen_Math.mp4";
+    public static String QUIZ_ = "Quiz_", MP4 = ".mp4", YES = "Yes.mp4", NO = "No.mp4";
 
     private static Retrofit retrofit;
 
@@ -93,14 +91,21 @@ public class RestInterface {
                 @Field("v_ctime") long v_ctime);
     }
 
-    // 어플이 종료되었을 경우 p_token과 Realm DB의 모든 데이터를
-    // request
-    public interface PostResult {
+    // 어플이 종료되었을 경우 p_token과 Realm DB의 모든 데이터를 request
+    public interface PostConnectResult {
         @FormUrlEncoded
         @POST("api/{what}")
-        Observable<Void> result(
+        Observable<Void> connectResult(
                 @Path("what") String what,
-                @Field("p_token") String p_token,
+                @Field("result") String result);
+    }
+
+    // 퀴즈가 종료되었을 경우 p_token과 Realm DB의 모든 데이터를 request
+    public interface PostQuizResult {
+        @FormUrlEncoded
+        @POST("api/{what}")
+        Observable<Void> quizResult(
+                @Path("what") String what,
                 @Field("result") String result);
     }
 

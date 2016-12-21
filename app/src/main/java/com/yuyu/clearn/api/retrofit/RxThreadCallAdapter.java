@@ -10,6 +10,7 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import rx.Observable;
 import rx.Scheduler;
 
+// Retrofit 라이브러리의 React Extension 방식을 위해 구현한 어댑터 클래스
 public class RxThreadCallAdapter extends CallAdapter.Factory {
 
     private RxJavaCallAdapterFactory rxFactory = RxJavaCallAdapterFactory.create();
