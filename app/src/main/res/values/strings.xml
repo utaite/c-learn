@@ -45,27 +45,4 @@
     <string name="CHECK">CHECK</string>
     <string name="SAVE">SAVE</string>
 
-    <string name="VIDEO">VIDEO</string>
-    <string name="NUMBER">NUMBER</string>
-    <string name="FINISH">FINISH</string>
-    <string name="RESULT">RESULT</string>
-    <string name="REALM_NAME">Clearn.db</string>
-
-    <string name="NONE" />
-    <string name="DESTROY">종료</string>
-    <string name="PLAY">재생</string>
-    <string name="STOP">정지</string>
-    <string name="NEXT">앞으로</string>
-    <string name="PREV">뒤로</string>
-    <string name="RESET">처음으로</string>
-    <string name="YES">응</string>
-    <string name="NO">아니</string>
-    <string name="STUDY">수업</string>
-    <string name="QUIZ">퀴즈</string>
-
-
-    <string name="CLIENT_ID">hgjHh11TeYg649dN5zT1</string>
-    <string name="TEST">Test</string>
-    <string name="SPEECH_TEST">/NaverSpeechTest</string>
-    <string name="DATE_TYPE">yyyy-MM-dd:HH-mm-ss</string>
 </resources>
