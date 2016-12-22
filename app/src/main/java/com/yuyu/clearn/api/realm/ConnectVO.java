@@ -13,6 +13,5 @@ public class ConnectVO extends RealmObject {
     private int v_num;
     private String start_time;
     private String end_time;
-    private String p_token;
 
 }

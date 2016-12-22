@@ -14,6 +14,5 @@ public class QuizVO extends RealmObject {
     private String userAnswerList;
     private String quizAnswerList;
     private String resultList;
-    private String p_token;
 
 }

@@ -17,7 +17,7 @@ public class MemberVO {
     @SerializedName("p_token")
     private String p_token;
 
-    @SerializedName("ct_file")
-    private String ct_file;
+    @SerializedName("ch_file")
+    private String ch_file;
 
 }
