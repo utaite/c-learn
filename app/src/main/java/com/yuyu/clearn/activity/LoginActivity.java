@@ -10,7 +10,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,6 +25,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.sdsmdg.tastytoast.TastyToast;
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import com.yuyu.clearn.R;
 import com.yuyu.clearn.api.retrofit.MemberVO;
 import com.yuyu.clearn.api.retrofit.RestInterface;
@@ -38,7 +38,7 @@ import butterknife.OnClick;
 import rx.Observable;
 import rx.Subscriber;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends RxAppCompatActivity {
 
     @BindView(R.id.id_edit)
     AutoCompleteTextView id_edit;
@@ -125,8 +125,10 @@ public class LoginActivity extends AppCompatActivity {
     // 아이디 저장 or 자동 로그인 실행
     public void loginDataLoad(String status, EditText id_edit, EditText pw_edit) {
         Observable.just(status)
+                .compose(bindToLifecycle())
                 .filter(str -> str != null)
                 .flatMap(str -> Observable.just(str)
+                        .compose(bindToLifecycle())
                         .groupBy(status1 -> status1.equals(CHECK)))
                 .subscribe(group -> {
                     SharedPreferences preferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
@@ -148,6 +150,7 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             String[] loginValue = new String[2];
             Observable.just(id_edit, pw_edit)
+                    .compose(bindToLifecycle())
                     // EditText 공백 여부 확인
                     .filter(editText -> {
                         boolean empty = TextUtils.isEmpty(editText.getText().toString());
@@ -264,6 +267,7 @@ public class LoginActivity extends AppCompatActivity {
     // 버튼 커스텀 설정
     public void buttonCustomSet(Context context, Typeface typeface, Button... btns) {
         Observable.from(btns)
+                .compose(bindToLifecycle())
                 .subscribe(btn -> {
                     btn.setTypeface(typeface);
                     btn.animate()
