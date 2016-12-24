@@ -2,6 +2,7 @@
 package com.yuyu.clearn.activity;
 
 import android.animation.Animator;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -95,9 +96,15 @@ public class LoginActivity extends RxAppCompatActivity {
         int vid = view.getId();
         if (vid == R.id.login_btn) {
             loginPrepare(id_edit, pw_edit);
-        } else if (vid == R.id.register_btn || vid == R.id.find_btn) {
+        } else if (vid == R.id.register_btn) {
             if (networkCheck(context)) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(RestInterface.BASE + (vid == R.id.register_btn ? RestInterface.REGISTER_URL : RestInterface.FIND_URL))));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(RestInterface.BASE + RestInterface.REGISTER_URL)));
+            } else {
+                TastyToast.makeText(context, getString(R.string.login_internet_err), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
+            }
+        } else if (vid == R.id.find_btn) {
+            if (networkCheck(context)) {
+                onDialog();
             } else {
                 TastyToast.makeText(context, getString(R.string.login_internet_err), TastyToast.LENGTH_SHORT, TastyToast.ERROR);
             }
@@ -120,6 +127,15 @@ public class LoginActivity extends RxAppCompatActivity {
             save_btn.setChecked(!save_btn.isChecked());
         }
         check_btn.setChecked(false);
+    }
+
+    public void onDialog() {
+        // 정렬 텍스트를 배열화
+        String items[] = new String[]{"ID", "PW"};
+        AlertDialog.Builder ab = new AlertDialog.Builder(context);
+        ab.setTitle(getString(R.string._login_find_btn));
+        ab.setSingleChoiceItems(items, 0, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(RestInterface.BASE + (which == 0 ? RestInterface.FIND_ID : RestInterface.FIND_PW)))));
+        ab.show();
     }
 
     // 아이디 저장 or 자동 로그인 실행

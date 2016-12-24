@@ -492,14 +492,12 @@ public class VideoActivity extends RxAppCompatActivity {
 
     public void mediaPlayerInit(int resId) {
         Observable.just(mediaPlayer)
-                .compose(bindToLifecycle())
                 .filter(mediaPlayer1 -> mediaPlayer1 != null)
                 .subscribe(mediaPlayer1 -> {
                     mediaPlayer1.stop();
                     mediaPlayer1.release();
                 });
         Observable.just(mediaPlayer = MediaPlayer.create(context, resId))
-                .compose(bindToLifecycle())
                 .subscribe(mediaPlayer1 -> mediaPlayer1.setOnPreparedListener(MediaPlayer::start));
     }
 
