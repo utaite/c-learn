@@ -130,11 +130,14 @@ public class LoginActivity extends RxAppCompatActivity {
     }
 
     public void onDialog() {
-        // 정렬 텍스트를 배열화
-        String items[] = new String[]{"ID", "PW"};
+        // ID, PW 찾기
+        String items[] = new String[]{"아이디 찾기", "비밀번호 찾기"};
         AlertDialog.Builder ab = new AlertDialog.Builder(context);
         ab.setTitle(getString(R.string._login_find_btn));
-        ab.setSingleChoiceItems(items, 0, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(RestInterface.BASE + (which == 0 ? RestInterface.FIND_ID : RestInterface.FIND_PW)))));
+        ab.setSingleChoiceItems(items, -1, (dialog, which) -> {
+            dialog.dismiss();
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(RestInterface.BASE + (which == 0 ? RestInterface.FIND_ID : RestInterface.FIND_PW))));
+        });
         ab.show();
     }
 

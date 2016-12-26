@@ -14,7 +14,7 @@ import rx.schedulers.Schedulers;
 // Restful 통신에 필요한 데이터, 객체, 인터페이스 등의 자원을 모으기 위해 구현한 클래스
 public class RestInterface {
 
-    public static String BASE = "http://192.168.1.15/CLearn/", RESOURCES = "resources/", IMAGE = "image/", VIDEO = "video/";
+    public static String BASE = "http://192.168.0.141/CLearn/", RESOURCES = "resources/", IMAGE = "image/", VIDEO = "video/";
     public static String REGISTER_URL = "member", FIND_ID = "idsearch", FIND_PW = "pwsearch", LOGIN_LOGO_IMG = "login_logo.png";
     public static String MAIN_SCREEN = "Main_Screen.mp4", VIDEO_SCREEN_KOREAN = "Video_Screen_Korean.mp4", VIDEO_SCREEN_MATH = "Video_Screen_Math.mp4";
     public static String QUIZ_ = "Quiz_", MP4 = ".mp4", YES = "Yes.mp4", NO = "No.mp4";

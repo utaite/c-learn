@@ -98,7 +98,7 @@ public class VideoActivity extends RxAppCompatActivity {
             // 뒤로가기 버튼이 터치 되었을 경우(컨트롤러 포함) 음성 인식 이벤트를 2초간 받음
             if (keyEvent.getAction() == KeyEvent.ACTION_UP && !naverRecognizer.getSpeechRecognizer().isRunning()) {
                 naverRecognizer.recognize();
-                mediaPlayerInit(R.raw.sstart);
+                mediaPlayerInit(R.raw.start);
                 handler.sendEmptyMessageDelayed(0, SEND_TIME);
             }
             return false;
@@ -364,7 +364,7 @@ public class VideoActivity extends RxAppCompatActivity {
             }
         }
         if (!isSpeechEvent) {
-            mediaPlayerInit(R.raw.rre);
+            mediaPlayerInit(R.raw.re);
         }
     }
 
@@ -470,7 +470,7 @@ public class VideoActivity extends RxAppCompatActivity {
 
                                                     @Override
                                                     public void onNext(Void aVoid) {
-                                                        mediaPlayerInit(R.raw.ddestroy);
+                                                        mediaPlayerInit(R.raw.destroy);
                                                         thread.interrupt();
                                                         video_view.fullScreenDialog.dismiss();
                                                         video_view.pauseRendering();
@@ -492,12 +492,14 @@ public class VideoActivity extends RxAppCompatActivity {
 
     public void mediaPlayerInit(int resId) {
         Observable.just(mediaPlayer)
+                .compose(bindToLifecycle())
                 .filter(mediaPlayer1 -> mediaPlayer1 != null)
                 .subscribe(mediaPlayer1 -> {
                     mediaPlayer1.stop();
                     mediaPlayer1.release();
                 });
         Observable.just(mediaPlayer = MediaPlayer.create(context, resId))
+                .compose(bindToLifecycle())
                 .subscribe(mediaPlayer1 -> mediaPlayer1.setOnPreparedListener(MediaPlayer::start));
     }
 
