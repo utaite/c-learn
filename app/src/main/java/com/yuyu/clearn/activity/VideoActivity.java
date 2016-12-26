@@ -42,7 +42,7 @@ public class VideoActivity extends RxAppCompatActivity {
     public VrVideoView video_view;
 
     private final String TAG = VideoActivity.class.getSimpleName();
-    private final int VIDEO_REPEAT_TIME = 0, VIDEO_LOAD_TIME = 1000, SEND_TIME = 2500, CONTROL_TIME = 20000;
+    private final int VIDEO_REPEAT_TIME = 0, VIDEO_LOAD_TIME = 1000, SEND_TIME = 3000, CONTROL_TIME = 20000;
     private final int MAIN_FLAG_0 = 0, MAIN_FLAG_1 = 1, MAIN_FLAG_2 = 2, MAIN_FLAG_3 = 3, MAIN_FLAG_1_TIME = 7000, MAIN_FLAG_2_TIME = 17000, MAIN_FLAG_3_TIME = 27000;
     private final int MAIN_SCREEN = 0, VIDEO_SCREEN = 1, QUIZ_SCREEN = 2, ANSWER_SCREEN = 3;
     private final int QUIZ_REPEAT_MAX = 1;
