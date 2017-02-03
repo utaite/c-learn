@@ -10,6 +10,8 @@ CLearn [팀프로젝트]
 
 - 팀원 : KOSTA 141기 C조 [송명진, 김승용, 이지원, 조은진, 박규민, 한예지, 송정환]
 
+- 역할 : 안드로이드 앱 전체 개발
+
 - [자세히보기][link]
 [link]: https://github.com/Utaite/c-learn-web
 
